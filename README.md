@@ -143,7 +143,7 @@ package.json tavern
 merge conflict boss
 
 <img width="1404" height="679" alt="Image" src="https://github.com/user-attachments/assets/d6aa9a1b-a824-4cec-a00c-fe2ffd1db79f" />
-fsdsds
+docs library
 
 # Diagrams
 ```
