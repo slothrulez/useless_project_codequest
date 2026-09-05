@@ -26,22 +26,22 @@ export const TouchControls: React.FC<TouchControlsProps> = ({
       {canInteract && (
         <button
           onClick={onInteract}
-          className="w-14 h-14 rounded-full bg-amber-600 active:bg-amber-500 border-2 border-amber-300 text-stone-950 font-pixel text-[10px] flex flex-col items-center justify-center shadow-xl animate-bounce"
+          className="w-14 h-14 rounded-full bg-stone-900 active:bg-stone-800 border-2 border-amber-600 text-amber-300 font-pixel text-[9px] flex flex-col items-center justify-center shadow-xl font-pixelated"
         >
-          <Hand className="w-5 h-5 mb-0.5" />
+          <Hand className="w-5 h-5 mb-0.5 text-amber-400" />
           <span>[E]</span>
         </button>
       )}
 
       {/* D-Pad */}
-      <div className="relative w-32 h-32 bg-stone-900/80 border-2 border-stone-700 rounded-full backdrop-blur-md shadow-2xl p-1">
+      <div className="relative w-32 h-32 bg-stone-950/90 border-2 border-stone-800 rounded-full backdrop-blur-md shadow-2xl p-1">
         {/* Up */}
         <button
           onTouchStart={() => onStartMove('up')}
           onTouchEnd={onStopMove}
           onMouseDown={() => onStartMove('up')}
           onMouseUp={onStopMove}
-          className="absolute top-1 left-1/2 -translate-x-1/2 w-10 h-10 bg-stone-800 active:bg-amber-600 rounded-t-lg border border-stone-600 flex items-center justify-center text-amber-300"
+          className="absolute top-1 left-1/2 -translate-x-1/2 w-10 h-10 bg-stone-900 active:bg-stone-800 rounded-t-lg border border-stone-700 flex items-center justify-center text-amber-400"
         >
           <ArrowUp className="w-5 h-5" />
         </button>
@@ -52,7 +52,7 @@ export const TouchControls: React.FC<TouchControlsProps> = ({
           onTouchEnd={onStopMove}
           onMouseDown={() => onStartMove('down')}
           onMouseUp={onStopMove}
-          className="absolute bottom-1 left-1/2 -translate-x-1/2 w-10 h-10 bg-stone-800 active:bg-amber-600 rounded-b-lg border border-stone-600 flex items-center justify-center text-amber-300"
+          className="absolute bottom-1 left-1/2 -translate-x-1/2 w-10 h-10 bg-stone-900 active:bg-stone-800 rounded-b-lg border border-stone-700 flex items-center justify-center text-amber-400"
         >
           <ArrowDown className="w-5 h-5" />
         </button>
@@ -63,7 +63,7 @@ export const TouchControls: React.FC<TouchControlsProps> = ({
           onTouchEnd={onStopMove}
           onMouseDown={() => onStartMove('left')}
           onMouseUp={onStopMove}
-          className="absolute left-1 top-1/2 -translate-y-1/2 w-10 h-10 bg-stone-800 active:bg-amber-600 rounded-l-lg border border-stone-600 flex items-center justify-center text-amber-300"
+          className="absolute left-1 top-1/2 -translate-y-1/2 w-10 h-10 bg-stone-900 active:bg-stone-800 rounded-l-lg border border-stone-700 flex items-center justify-center text-amber-400"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
@@ -74,13 +74,13 @@ export const TouchControls: React.FC<TouchControlsProps> = ({
           onTouchEnd={onStopMove}
           onMouseDown={() => onStartMove('right')}
           onMouseUp={onStopMove}
-          className="absolute right-1 top-1/2 -translate-y-1/2 w-10 h-10 bg-stone-800 active:bg-amber-600 rounded-r-lg border border-stone-600 flex items-center justify-center text-amber-300"
+          className="absolute right-1 top-1/2 -translate-y-1/2 w-10 h-10 bg-stone-900 active:bg-stone-800 rounded-r-lg border border-stone-700 flex items-center justify-center text-amber-400"
         >
           <ArrowRight className="w-5 h-5" />
         </button>
 
         {/* Center dot */}
-        <div className="absolute inset-0 m-auto w-4 h-4 rounded-full bg-stone-950 border border-stone-700 pointer-events-none" />
+        <div className="absolute inset-0 m-auto w-4 h-4 rounded-full bg-stone-900 border border-stone-800 pointer-events-none" />
       </div>
     </div>
   );

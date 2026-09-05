@@ -162,35 +162,29 @@ export const DialogueBox: React.FC<DialogueBoxProps> = ({ dialogue, onClose }) =
         }`}
       />
 
-      {/* Retro 800px x 150px Monospace Dialogue Box */}
+      {/* Retro 800px x 150px Pixelated Dialogue Box */}
       <div
         id="rpg-dialogue-box"
         onClick={handleAdvance}
-        className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-auto cursor-pointer select-none transition-all duration-200 ${
+        className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-auto cursor-pointer select-none transition-all duration-200 font-pixelated ${
           isVisible
             ? 'opacity-100 scale-100 ease-out translate-y-0'
             : 'opacity-0 scale-95 ease-in translate-y-2 pointer-events-none'
         }`}
         style={{
           width: 'min(800px, calc(100vw - 32px))',
-          height: '150px',
-          backgroundColor: 'rgba(26, 26, 26, 0.95)',
-          border: '2px solid #4dd0e1',
-          padding: '15px',
-          fontFamily: '"Courier New", Courier, monospace',
-          boxShadow: '0 0 25px rgba(77, 208, 225, 0.3), inset 0 0 15px rgba(0, 0, 0, 0.8)'
+          height: '155px',
+          backgroundColor: 'rgba(24, 22, 20, 0.96)',
+          border: '2px solid rgba(180, 83, 9, 0.85)',
+          padding: '14px',
+          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(0, 0, 0, 0.7)'
         }}
       >
-        <div className="flex flex-col justify-between h-full w-full">
-          {/* Top: NPC Name in Cyan (18px) */}
-          <div className="border-b border-stone-700/60 pb-1.5 flex items-center justify-between">
+        <div className="flex flex-col justify-between h-full w-full font-pixelated">
+          {/* Top: NPC Name in Amber (16px) */}
+          <div className="border-b border-stone-800 pb-1.5 flex items-center justify-between">
             <h2
-              className="font-bold tracking-wide"
-              style={{
-                fontSize: '18px',
-                color: '#4dd0e1',
-                textShadow: '0 0 8px rgba(77, 208, 225, 0.5)'
-              }}
+              className="font-bold tracking-wide font-pixel text-xs sm:text-sm text-amber-300"
             >
               {currentDialogue.title}
             </h2>
@@ -203,7 +197,7 @@ export const DialogueBox: React.FC<DialogueBoxProps> = ({ dialogue, onClose }) =
                     e.stopPropagation();
                     currentDialogue.secondaryButton?.onClick();
                   }}
-                  className="px-2.5 py-0.5 rounded text-xs bg-stone-800 hover:bg-stone-700 border border-stone-600 text-stone-300 transition"
+                  className="px-2.5 py-1 rounded text-[10px] bg-stone-900 hover:bg-stone-800 border border-stone-700 text-stone-300 transition"
                 >
                   {currentDialogue.secondaryButton.label}
                 </button>
@@ -216,7 +210,7 @@ export const DialogueBox: React.FC<DialogueBoxProps> = ({ dialogue, onClose }) =
                     e.stopPropagation();
                     currentDialogue.actionButton?.onClick();
                   }}
-                  className="px-2.5 py-0.5 rounded text-xs bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-400 text-cyan-200 transition font-bold"
+                  className="px-2.5 py-1 rounded text-[10px] bg-stone-800 hover:bg-stone-700 border border-amber-600 text-amber-200 transition font-bold"
                 >
                   {currentDialogue.actionButton.label} &rarr;
                 </button>
@@ -224,12 +218,11 @@ export const DialogueBox: React.FC<DialogueBoxProps> = ({ dialogue, onClose }) =
             </div>
           </div>
 
-          {/* Middle: Dialogue Body Text in White (14px) */}
+          {/* Middle: Dialogue Body Text (13-14px) */}
           <div
-            className="flex-1 py-1 overflow-y-auto flex flex-col justify-center text-white font-mono"
+            className="flex-1 py-1.5 overflow-y-auto flex flex-col justify-center text-stone-100 text-xs sm:text-sm font-pixelated"
             style={{
-              fontSize: '14px',
-              lineHeight: '1.4'
+              lineHeight: '1.45'
             }}
           >
             {displayedLines.map((line, idx) => (
@@ -250,9 +243,9 @@ export const DialogueBox: React.FC<DialogueBoxProps> = ({ dialogue, onClose }) =
                       soundFx.playButton();
                       opt.onClick();
                     }}
-                    className="px-2.5 py-1 rounded text-xs bg-cyan-950/70 hover:bg-cyan-900 border border-cyan-500/50 hover:border-cyan-400 text-cyan-200 transition font-mono flex items-center gap-1.5"
+                    className="px-2.5 py-1 rounded text-xs bg-stone-900 hover:bg-stone-800 border border-amber-800/60 hover:border-amber-600 text-amber-200 transition flex items-center gap-1.5"
                   >
-                    <span className="text-amber-400 font-bold">[{oIdx + 1}]</span>
+                    <span className="text-amber-400 font-bold font-pixel text-[9px]">[{oIdx + 1}]</span>
                     <span>{opt.label}</span>
                   </button>
                 ))}
@@ -260,16 +253,15 @@ export const DialogueBox: React.FC<DialogueBoxProps> = ({ dialogue, onClose }) =
             )}
           </div>
 
-          {/* Bottom: Continuation prompt in Green (#81c784) */}
-          <div className="border-t border-stone-800 pt-1.5 flex items-center justify-between">
+          {/* Bottom: Continuation prompt in warm amber/green */}
+          <div className="border-t border-stone-800 pt-1.5 flex items-center justify-between text-[10px]">
             <span
-              className="text-stone-400 text-xs flex items-center gap-1.5"
-              style={{ color: '#81c784' }}
+              className="text-amber-300/90 flex items-center gap-1.5"
             >
-              <span className="inline-block w-2 h-2 rounded-full bg-[#81c784] animate-ping opacity-75" />
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-400 opacity-80" />
               {!isTypingComplete ? '[Click / SPACE to skip]' : '[SPACE or E to continue]'}
             </span>
-            <span className="text-[11px] text-stone-500 hidden sm:inline">
+            <span className="text-stone-500 hidden sm:inline text-[9px]">
               Click anywhere to advance
             </span>
           </div>

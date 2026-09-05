@@ -118,16 +118,16 @@ export const BranchSwitchModal: React.FC<BranchSwitchModalProps> = ({
         )}
 
         {/* Existing Branches */}
-        <div className="space-y-1.5 mb-4 max-h-48 overflow-y-auto pr-1">
+        <div className="space-y-1.5 mb-4 max-h-48 overflow-y-auto pr-1 font-pixelated">
           <div className="text-[9px] font-pixel text-stone-500 mb-1">AVAILABLE BRANCHES:</div>
           {branches.map((b) => (
             <button
               key={b}
               disabled={isSwitching}
               onClick={() => handleSelect(b)}
-              className={`w-full flex items-center justify-between p-2.5 rounded text-xs font-mono transition border ${
+              className={`w-full flex items-center justify-between p-2.5 rounded text-xs font-pixelated transition border ${
                 b === currentBranch
-                  ? 'bg-amber-950/70 border-amber-500 text-amber-200 font-bold'
+                  ? 'bg-stone-800 border-amber-600 text-amber-200 font-bold'
                   : 'bg-stone-950/70 hover:bg-stone-800 border-stone-800 text-stone-300'
               }`}
             >
@@ -136,8 +136,8 @@ export const BranchSwitchModal: React.FC<BranchSwitchModalProps> = ({
                 <span>{b}</span>
               </div>
               {b === currentBranch ? (
-                <span className="flex items-center gap-1 text-emerald-400 text-[10px] font-pixel">
-                  <Check className="w-3.5 h-3.5" /> ACTIVE
+                <span className="flex items-center gap-1 text-emerald-400 text-[9px] font-pixel">
+                  <Check className="w-3 h-3" /> ACTIVE
                 </span>
               ) : isSwitching ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin text-stone-500" />
@@ -147,7 +147,7 @@ export const BranchSwitchModal: React.FC<BranchSwitchModalProps> = ({
         </div>
 
         {/* Create new branch form */}
-        <form onSubmit={handleCreate} className="border-t border-stone-800 pt-3">
+        <form onSubmit={handleCreate} className="border-t border-stone-800 pt-3 font-pixelated">
           <div className="text-[9px] font-pixel text-stone-500 mb-1">CREATE & CHECKOUT NEW BRANCH:</div>
           <div className="flex gap-2">
             <input
@@ -156,14 +156,14 @@ export const BranchSwitchModal: React.FC<BranchSwitchModalProps> = ({
               onChange={(e) => setNewBranchName(e.target.value)}
               placeholder="e.g. feature/elder-wisdom"
               disabled={isSwitching}
-              className="flex-1 bg-stone-950 border border-stone-800 focus:border-amber-500 rounded px-2.5 py-1.5 text-xs font-mono text-stone-200 placeholder-stone-600 focus:outline-none"
+              className="flex-1 bg-stone-950 border border-stone-800 focus:border-amber-500 rounded px-2.5 py-1.5 text-xs font-pixelated text-stone-200 placeholder-stone-600 focus:outline-none"
             />
             <button
               type="submit"
               disabled={!newBranchName.trim() || isSwitching}
-              className="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 disabled:bg-stone-800 disabled:text-stone-600 text-stone-950 font-pixel text-[8px] font-bold rounded transition flex items-center gap-1"
+              className="px-3 py-1.5 bg-stone-800 hover:bg-stone-700 border border-amber-600 text-amber-200 disabled:opacity-50 disabled:border-stone-800 disabled:text-stone-600 font-pixel text-[8px] font-bold rounded transition flex items-center gap-1"
             >
-              <Plus className="w-3 h-3" />
+              <Plus className="w-3 h-3 text-amber-400" />
               <span>Checkout -b</span>
             </button>
           </div>

@@ -75,21 +75,19 @@ export interface RealGitStatus {
   branches: string[];
 }
 
-export interface Achievement {
-  id: string;
-  title: string;
-  description: string;
-  unlocked: boolean;
-  icon: string;
-}
-
 export interface PlayerStats {
   level: number;
   xp: number;
   commitsCount: number;
   shrineVisits: number;
   elderWisdomFound: number;
-  achievements: Achievement[];
+  achievements: {
+    id: string;
+    title: string;
+    description: string;
+    unlocked: boolean;
+    icon: string;
+  }[];
 }
 
 export interface GameNotification {
@@ -126,6 +124,97 @@ export type TutorialStep =
   | 'elder_after_commit'// 5. After commit, Elder dialogue changes
   | 'visit_shrine'      // 6. Ask player to visit Git Shrine
   | 'completed';        // 7. Free play
+
+export interface GitHubUser {
+  login: string;
+  id: number;
+  name: string | null;
+  avatar_url: string;
+  html_url: string;
+  bio: string | null;
+  public_repos: number;
+  followers: number;
+  following: number;
+  company?: string | null;
+  location?: string | null;
+}
+
+export interface GitHubRepoSummary {
+  id: number;
+  name: string;
+  full_name: string;
+  private: boolean;
+  owner: { login: string; avatar_url: string };
+  description: string | null;
+  fork: boolean;
+  url: string;
+  html_url: string;
+  created_at: string;
+  updated_at: string;
+  pushed_at: string;
+  stargazers_count: number;
+  watchers_count: number;
+  language: string | null;
+  forks_count: number;
+  open_issues_count: number;
+  default_branch: string;
+}
+
+export interface GitHubTreeItem {
+  path: string;
+  mode: string;
+  type: 'blob' | 'tree';
+  sha: string;
+  size?: number;
+  url: string;
+}
+
+export interface GitHubCommitItem {
+  sha: string;
+  commit: {
+    author: { name: string; email: string; date: string };
+    message: string;
+  };
+  author?: { login: string; avatar_url: string } | null;
+  html_url: string;
+}
+
+export interface GitHubIssueItem {
+  id: number;
+  number: number;
+  title: string;
+  state: 'open' | 'closed';
+  user: { login: string; avatar_url: string };
+  labels: { name: string; color: string }[];
+  comments: number;
+  created_at: string;
+  body: string | null;
+  pull_request?: any;
+}
+
+export interface GitHubPullRequestItem {
+  id: number;
+  number: number;
+  title: string;
+  state: 'open' | 'closed';
+  user: { login: string; avatar_url: string };
+  head: { ref: string; label: string };
+  base: { ref: string; label: string };
+  created_at: string;
+  merged_at: string | null;
+}
+
+export interface GitHubFullRepoData {
+  repo: GitHubRepoSummary;
+  activeBranch: string;
+  branches: string[];
+  commits: GitHubCommitItem[];
+  tree: GitHubTreeItem[];
+  readme: string | null;
+  issues: GitHubIssueItem[];
+  pullRequests: GitHubPullRequestItem[];
+  languages: Record<string, number>;
+}
 
 export interface GameState {
   repo: {

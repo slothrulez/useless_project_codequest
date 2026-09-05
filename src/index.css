@@ -1,16 +1,35 @@
 @import "tailwindcss";
 
+@layer base {
+  *, ::before, ::after {
+    font-family: 'Pixelify Sans', 'Silkscreen', 'Press Start 2P', monospace, sans-serif;
+    -webkit-font-smoothing: none;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  html, body, button, input, textarea, select {
+    font-family: 'Pixelify Sans', 'Silkscreen', 'Press Start 2P', monospace, sans-serif;
+    letter-spacing: 0.02em;
+  }
+}
+
 @layer utilities {
   .pixelated {
     image-rendering: pixelated;
     image-rendering: -moz-crisp-edges;
     image-rendering: crisp-edges;
   }
+  .font-pixelated {
+    font-family: 'Pixelify Sans', 'Silkscreen', monospace;
+  }
   .font-pixel {
     font-family: 'Press Start 2P', monospace;
   }
   .font-retro {
-    font-family: 'Silkscreen', monospace;
+    font-family: 'Silkscreen', 'Pixelify Sans', monospace;
+  }
+  .font-mono {
+    font-family: 'Pixelify Sans', 'VT323', monospace;
   }
   .font-terminal {
     font-family: 'VT323', monospace;
@@ -26,9 +45,9 @@
   background: #1c1917;
 }
 ::-webkit-scrollbar-thumb {
-  background: #78350f;
-  border: 1px solid #d97706;
+  background: #44403c;
+  border: 1px solid #78716c;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #92400e;
+  background: #57534e;
 }

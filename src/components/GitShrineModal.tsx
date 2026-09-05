@@ -88,21 +88,20 @@ export const GitShrineModal: React.FC<GitShrineModalProps> = ({
           boxShadow: '0 0 50px rgba(225, 29, 72, 0.35), inset 0 0 25px rgba(159, 18, 57, 0.4)'
         }}
       >
-        {/* Glowing fire header */}
-        <div className="flex items-center justify-between border-b-2 border-rose-900/60 pb-3 mb-4">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b-2 border-stone-800 pb-3 mb-4 font-pixelated">
           <div className="flex items-center gap-3">
-            <div className="relative w-11 h-11 rounded-lg bg-rose-950/80 border-2 border-rose-600 flex items-center justify-center text-rose-400 shadow-lg">
-              <Flame className="w-6 h-6 text-orange-500 animate-bounce" />
-              <div className="absolute inset-0 bg-rose-500/20 rounded-lg blur-sm animate-pulse" />
+            <div className="relative w-10 h-10 rounded-lg bg-stone-900 border border-amber-700/80 flex items-center justify-center text-amber-400 shadow-md">
+              <Flame className="w-5 h-5 text-amber-500" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-xs sm:text-sm font-pixel text-rose-400">GIT SHRINE</h2>
-                <span className="px-2 py-0.5 bg-rose-900/70 border border-rose-700 text-rose-200 font-mono text-[10px] rounded">
+                <h2 className="text-xs sm:text-sm font-pixel text-amber-300">GIT SHRINE</h2>
+                <span className="px-2 py-0.5 bg-stone-950 border border-stone-700 text-stone-300 font-pixel text-[9px] rounded">
                   .git/
                 </span>
               </div>
-              <p className="text-[10px] font-retro text-stone-400">Sacred Heart of Immutable Version History</p>
+              <p className="text-[10px] font-pixelated text-stone-400">Sacred Heart of Immutable Version History</p>
             </div>
           </div>
           <button
@@ -117,7 +116,7 @@ export const GitShrineModal: React.FC<GitShrineModalProps> = ({
         </div>
 
         {/* Tab selection */}
-        <div className="flex border-b border-stone-800 mb-3 gap-1 text-[10px] font-pixel">
+        <div className="flex border-b border-stone-800 mb-3 gap-1 text-[9px] font-pixel">
           <button
             onClick={() => {
               setActiveTab('log');
@@ -125,7 +124,7 @@ export const GitShrineModal: React.FC<GitShrineModalProps> = ({
             }}
             className={`px-3 py-1.5 rounded-t transition flex items-center gap-1.5 ${
               activeTab === 'log'
-                ? 'bg-rose-950/70 text-rose-300 border-t-2 border-rose-500'
+                ? 'bg-stone-900 text-amber-300 border-t-2 border-amber-600'
                 : 'text-stone-400 hover:text-stone-200'
             }`}
           >
@@ -139,7 +138,7 @@ export const GitShrineModal: React.FC<GitShrineModalProps> = ({
             }}
             className={`px-3 py-1.5 rounded-t transition flex items-center gap-1.5 ${
               activeTab === 'internals'
-                ? 'bg-rose-950/70 text-rose-300 border-t-2 border-rose-500'
+                ? 'bg-stone-900 text-amber-300 border-t-2 border-amber-600'
                 : 'text-stone-400 hover:text-stone-200'
             }`}
           >
@@ -153,7 +152,7 @@ export const GitShrineModal: React.FC<GitShrineModalProps> = ({
             }}
             className={`px-3 py-1.5 rounded-t transition flex items-center gap-1.5 ${
               activeTab === 'terminal'
-                ? 'bg-rose-950/70 text-rose-300 border-t-2 border-rose-500'
+                ? 'bg-stone-900 text-amber-300 border-t-2 border-amber-600'
                 : 'text-stone-400 hover:text-stone-200'
             }`}
           >
@@ -164,8 +163,8 @@ export const GitShrineModal: React.FC<GitShrineModalProps> = ({
 
         {/* Tab contents */}
         {activeTab === 'log' && (
-          <div className="space-y-2.5 max-h-64 overflow-y-auto pr-1">
-            <div className="flex items-center justify-between px-2 py-1 bg-stone-900 rounded text-[10px] font-mono text-stone-400">
+          <div className="space-y-2.5 max-h-64 overflow-y-auto pr-1 font-pixelated">
+            <div className="flex items-center justify-between px-2 py-1 bg-stone-900 rounded text-[10px] font-pixelated text-stone-400 border border-stone-800">
               <span>HEAD &rarr; refs/heads/{branch}</span>
               {!isClean && (
                 <button
@@ -180,26 +179,26 @@ export const GitShrineModal: React.FC<GitShrineModalProps> = ({
               )}
             </div>
 
-            <div className="relative border-l-2 border-rose-800 ml-4 pl-4 space-y-3">
+            <div className="relative border-l-2 border-stone-800 ml-4 pl-4 space-y-3">
               {commitHistory.map((commit, idx) => (
-                <div key={commit.hash} className="relative group">
-                  {/* Glowing node point */}
+                <div key={commit.hash} className="relative group font-pixelated">
+                  {/* Node point */}
                   <div
                     className={`absolute -left-[23px] top-1.5 w-3.5 h-3.5 rounded-full border-2 ${
                       idx === 0
-                        ? 'bg-rose-600 border-rose-300 animate-pulse ring-2 ring-rose-500/50'
-                        : 'bg-stone-800 border-rose-700'
+                        ? 'bg-amber-700 border-amber-400'
+                        : 'bg-stone-900 border-stone-700'
                     }`}
                   />
-                  <div className="p-2.5 bg-stone-900/90 hover:bg-stone-850 border border-stone-800 hover:border-rose-800/80 rounded-lg transition">
+                  <div className="p-2.5 bg-stone-900/90 hover:bg-stone-850 border border-stone-800 hover:border-amber-700/60 rounded-lg transition">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="font-mono text-xs text-rose-400 font-bold">{commit.hash}</span>
-                      <span className="text-[10px] text-stone-400 font-retro">{commit.timestamp}</span>
+                      <span className="font-pixel text-[10px] text-amber-300 font-bold">{commit.hash}</span>
+                      <span className="text-[10px] text-stone-400 font-pixelated">{commit.timestamp}</span>
                     </div>
-                    <p className="text-xs font-mono text-stone-200 mt-1">{commit.message}</p>
-                    <div className="text-[9px] text-stone-400 font-mono mt-1 flex items-center justify-between">
+                    <p className="text-xs font-pixelated text-stone-200 mt-1">{commit.message}</p>
+                    <div className="text-[9px] text-stone-400 font-pixelated mt-1 flex items-center justify-between">
                       <span>Author: {commit.author}</span>
-                      <span className="text-rose-500 font-pixel text-[8px]">branch: {commit.branch}</span>
+                      <span className="text-amber-400 font-pixel text-[8px]">branch: {commit.branch}</span>
                     </div>
                   </div>
                 </div>
@@ -209,23 +208,23 @@ export const GitShrineModal: React.FC<GitShrineModalProps> = ({
         )}
 
         {activeTab === 'internals' && (
-          <div className="space-y-2 max-h-64 overflow-y-auto pr-1 text-xs font-mono">
-            <div className="p-2.5 bg-stone-900 rounded border border-rose-900/40">
-              <div className="text-rose-400 font-pixel text-[10px] mb-1">.git/HEAD</div>
+          <div className="space-y-2 max-h-64 overflow-y-auto pr-1 text-xs font-pixelated">
+            <div className="p-2.5 bg-stone-900 rounded border border-stone-800">
+              <div className="text-amber-300 font-pixel text-[10px] mb-1">.git/HEAD</div>
               <p className="text-stone-300 text-[11px]">
                 A compass pointing to your current vantage point: <code>ref: refs/heads/{branch}</code>. Detached HEAD
                 occurs when you step directly onto a past commit hash without a branch vessel!
               </p>
             </div>
-            <div className="p-2.5 bg-stone-900 rounded border border-rose-900/40">
-              <div className="text-rose-400 font-pixel text-[10px] mb-1">.git/objects/</div>
+            <div className="p-2.5 bg-stone-900 rounded border border-stone-800">
+              <div className="text-amber-300 font-pixel text-[10px] mb-1">.git/objects/</div>
               <p className="text-stone-300 text-[11px]">
                 The immutable cryptographic vault! Blobs (file data), Trees (directories), Commits (metadata + author +
                 parents), and Annotated Tags. Every object is named by its SHA-1 hash.
               </p>
             </div>
-            <div className="p-2.5 bg-stone-900 rounded border border-rose-900/40">
-              <div className="text-rose-400 font-pixel text-[10px] mb-1">.git/index</div>
+            <div className="p-2.5 bg-stone-900 rounded border border-stone-800">
+              <div className="text-amber-300 font-pixel text-[10px] mb-1">.git/index</div>
               <p className="text-stone-300 text-[11px]">
                 The mystical staging area! A binary cache holding the blueprint of your upcoming commit. "git add" drafts
                 files here.
@@ -235,8 +234,8 @@ export const GitShrineModal: React.FC<GitShrineModalProps> = ({
         )}
 
         {activeTab === 'terminal' && (
-          <div className="space-y-2">
-            <div className="bg-black/90 p-3 rounded-lg border border-stone-800 font-mono text-xs text-emerald-400 h-48 overflow-y-auto space-y-1">
+          <div className="space-y-2 font-pixelated">
+            <div className="bg-stone-950 p-3 rounded-lg border border-stone-800 font-pixelated text-xs text-stone-200 h-48 overflow-y-auto space-y-1">
               {terminalLogs.map((log, i) => (
                 <div key={i} className="leading-relaxed">
                   {log}
@@ -245,19 +244,19 @@ export const GitShrineModal: React.FC<GitShrineModalProps> = ({
             </div>
 
             <form onSubmit={handleCommand} className="flex gap-2">
-              <div className="flex-1 flex items-center bg-black/90 border border-rose-900/60 rounded px-2 text-stone-200 font-mono text-xs">
-                <span className="text-rose-500 mr-2">$</span>
+              <div className="flex-1 flex items-center bg-stone-950 border border-stone-700 rounded px-2 text-stone-200 font-pixelated text-xs">
+                <span className="text-amber-400 mr-2">$</span>
                 <input
                   type="text"
                   value={terminalInput}
                   onChange={(e) => setTerminalInput(e.target.value)}
                   placeholder="type git status, git log..."
-                  className="w-full bg-transparent py-1.5 focus:outline-none text-rose-200 placeholder-stone-600"
+                  className="w-full bg-transparent py-1.5 focus:outline-none text-stone-200 placeholder-stone-600 font-pixelated"
                 />
               </div>
               <button
                 type="submit"
-                className="px-3 py-1.5 bg-rose-700 hover:bg-rose-600 text-stone-100 font-pixel text-[9px] rounded transition"
+                className="px-3 py-1.5 bg-stone-800 hover:bg-stone-700 border border-amber-600 text-amber-200 font-pixel text-[9px] rounded transition"
               >
                 Invoke
               </button>

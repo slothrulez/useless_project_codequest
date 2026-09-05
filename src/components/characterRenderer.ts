@@ -1,42 +1,236 @@
 import { Direction } from '../types';
 
 /**
- * Character renderer for the 16x16 pixel Gorillaz-style chibi character:
- * - Messy black anime/Gorillaz hair
- * - Warm tan skin with shading and highlights
- * - White t-shirt with GORILLAZ print
- * - Dark black jeans/pants
- * - Black & white sneakers
+ * Character renderer for the Gorillaz chibi sprite sheet:
+ * - 4x4 Sprite Sheet Grid:
+ *   Row 0: Down (Facing forward, walking frames 0-3)
+ *   Row 1: Up (Facing away, walking frames 0-3)
+ *   Row 2: Left (Facing left, walking frames 0-3)
+ *   Row 3: Right (Facing right, walking frames 0-3)
  * 
- * Implements exact 4-frame walking cycles for DOWN, UP, LEFT, RIGHT:
- * - DOWN:
- *     Frame 1: Both feet together, neutral stance
- *     Frame 2: Left leg forward, right arm back
- *     Frame 3: Feet together, mid-stride
- *     Frame 4: Right leg forward, left arm back
- * - UP:
- *     Frame 1: Both feet together
- *     Frame 2: Right leg forward
- *     Frame 3: Feet together, mid-stride
- *     Frame 4: Left leg forward
- * - LEFT:
- *     Frame 1: Facing left, neutral
- *     Frame 2: Left leg back, body leaning into step
- *     Frame 3: Neutral mid-stride
- *     Frame 4: Left leg forward, stepping motion
- * - RIGHT:
- *     Frame 1: Facing right, neutral
- *     Frame 2: Right leg back, body leaning
- *     Frame 3: Neutral mid-stride
- *     Frame 4: Right leg forward, stepping motion
- * 
- * - Idle animations: single relaxed idle frame matching last direction faced
- * - Idle breathing effect: subtle 1-2 pixel float cycle
- * - Walking bob: 1-2 pixels up-down
- * - Semi-transparent oval shadow under feet
+ * Features:
+ * - Real-time alpha masking for clean transparent game-world integration
+ * - Smooth 4-frame walk cycles + breathing idle state
+ * - Ground contact shadow & lean physics
+ * - High-precision fallback procedural renderer
  */
 
 export class CharacterSprite {
+  private static spriteCanvas: HTMLCanvasElement | null = null;
+  private static isLoaded: boolean = false;
+  private static isProcessing: boolean = false;
+  private static loadAttempted: boolean = false;
+
+  private static initSprite() {
+    if (this.loadAttempted || typeof window === 'undefined') return;
+    this.loadAttempted = true;
+
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+
+    img.onload = () => {
+      try {
+        const offCanvas = document.createElement('canvas');
+        offCanvas.width = img.naturalWidth || img.width;
+        offCanvas.height = img.naturalHeight || img.height;
+        const offCtx = offCanvas.getContext('2d', { willReadFrequently: true });
+
+        if (!offCtx) return;
+
+        offCtx.drawImage(img, 0, 0);
+        const imgData = offCtx.getImageData(0, 0, offCanvas.width, offCanvas.height);
+        const data = imgData.data;
+
+        const w = offCanvas.width;
+        const h = offCanvas.height;
+        const cols = 4;
+        const rows = 4;
+        const cw = Math.floor(w / cols);
+        const ch = Math.floor(h / rows);
+
+        // Flood fill to mark ONLY the extreme exterior corners outside the sprite frames
+        // This ensures the character's white dress / tunic and sneakers remain 100% solid, crisp, and opaque!
+        const visited = new Uint8Array(w * h);
+        const queue: number[] = [];
+
+        // Strict background check: only outer border whitespace is marked as background
+        const isBgCandidate = (px: number, py: number): boolean => {
+          if (px < 0 || px >= w || py < 0 || py >= h) return false;
+          const idx = (py * w + px) * 4;
+          const r = data[idx];
+          const g = data[idx + 1];
+          const b = data[idx + 2];
+          return r > 235 && g > 235 && b > 235;
+        };
+
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            const minX = c * cw;
+            const maxX = (c + 1) * cw - 1;
+            const minY = r * ch;
+            const maxY = (r + 1) * ch - 1;
+
+            // Only seed from the outer 2-pixel margin of each frame cell
+            const seeds: [number, number][] = [
+              [minX + 1, minY + 1],
+              [maxX - 1, minY + 1],
+              [minX + 1, maxY - 1],
+              [maxX - 1, maxY - 1],
+              [Math.floor((minX + maxX) / 2), minY + 1],
+              [minX + 1, Math.floor((minY + maxY) / 2)],
+              [maxX - 1, Math.floor((minY + maxY) / 2)],
+              [Math.floor((minX + maxX) / 2), maxY - 1]
+            ];
+
+            for (const [sx, sy] of seeds) {
+              const pos = sy * w + sx;
+              if (isBgCandidate(sx, sy) && !visited[pos]) {
+                visited[pos] = 1;
+                queue.push(pos);
+              }
+            }
+          }
+        }
+
+        let head = 0;
+        while (head < queue.length) {
+          const curr = queue[head++];
+          const cx = curr % w;
+          const cy = Math.floor(curr / w);
+
+          const neighbors: [number, number][] = [
+            [cx + 1, cy],
+            [cx - 1, cy],
+            [cx, cy + 1],
+            [cx, cy - 1]
+          ];
+
+          for (const [nx, ny] of neighbors) {
+            if (nx >= 0 && nx < w && ny >= 0 && ny < h) {
+              const npos = ny * w + nx;
+              if (!visited[npos] && isBgCandidate(nx, ny)) {
+                visited[npos] = 1;
+                queue.push(npos);
+              }
+            }
+          }
+        }
+
+        // Apply alpha channel: exterior background and outer frame borders become transparent,
+        // while character body, skin, hair, and white dress stay 100% solid opaque.
+        for (let y = 0; y < h; y++) {
+          for (let x = 0; x < w; x++) {
+            const pos = y * w + x;
+            const idx = pos * 4;
+            if (visited[pos] || x < 2 || x >= w - 2 || y < 2 || y >= h - 2) {
+              data[idx + 3] = 0;
+            } else {
+              data[idx + 3] = 255;
+              // If within character area and light, ensure it is opaque solid white
+              if (data[idx] > 200 && data[idx + 1] > 200 && data[idx + 2] > 200) {
+                data[idx] = 255;
+                data[idx + 1] = 255;
+                data[idx + 2] = 255;
+                data[idx + 3] = 255;
+              }
+            }
+          }
+        }
+
+        offCtx.putImageData(imgData, 0, 0);
+
+        // Convert into authentic retro pixel-art grid (24x24 pixels per cell)
+        const cellPixelRes = 24;
+        const pixelCanvas = document.createElement('canvas');
+        pixelCanvas.width = cols * cellPixelRes;
+        pixelCanvas.height = rows * cellPixelRes;
+        const pixCtx = pixelCanvas.getContext('2d', { willReadFrequently: true });
+
+        if (pixCtx) {
+          pixCtx.imageSmoothingEnabled = false;
+          const pixW = pixelCanvas.width;
+          const pixH = pixelCanvas.height;
+          const pixImgData = pixCtx.createImageData(pixW, pixH);
+          const pixData = pixImgData.data;
+
+          for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+              for (let py = 0; py < cellPixelRes; py++) {
+                for (let px = 0; px < cellPixelRes; px++) {
+                  const destX = c * cellPixelRes + px;
+                  const destY = r * cellPixelRes + py;
+                  const destIdx = (destY * pixW + destX) * 4;
+
+                  const srcStartX = Math.floor(c * cw + (px * cw) / cellPixelRes);
+                  const srcEndX = Math.floor(c * cw + ((px + 1) * cw) / cellPixelRes);
+                  const srcStartY = Math.floor(r * ch + (py * ch) / cellPixelRes);
+                  const srcEndY = Math.floor(r * ch + ((py + 1) * ch) / cellPixelRes);
+
+                  let sumR = 0;
+                  let sumG = 0;
+                  let sumB = 0;
+                  let opaqueCount = 0;
+                  let totalCount = 0;
+
+                  for (let sy = srcStartY; sy < srcEndY; sy++) {
+                    for (let sx = srcStartX; sx < srcEndX; sx++) {
+                      const sIdx = (sy * w + sx) * 4;
+                      totalCount++;
+                      if (data[sIdx + 3] > 100) {
+                        opaqueCount++;
+                        sumR += data[sIdx];
+                        sumG += data[sIdx + 1];
+                        sumB += data[sIdx + 2];
+                      }
+                    }
+                  }
+
+                  if (opaqueCount > totalCount * 0.25) {
+                    const avgR = Math.round(sumR / opaqueCount);
+                    const avgG = Math.round(sumG / opaqueCount);
+                    const avgB = Math.round(sumB / opaqueCount);
+
+                    // If light color, guarantee crisp opaque white dress
+                    if (avgR > 185 && avgG > 185 && avgB > 185) {
+                      pixData[destIdx] = 255;
+                      pixData[destIdx + 1] = 255;
+                      pixData[destIdx + 2] = 255;
+                    } else {
+                      pixData[destIdx] = avgR;
+                      pixData[destIdx + 1] = avgG;
+                      pixData[destIdx + 2] = avgB;
+                    }
+                    pixData[destIdx + 3] = 255;
+                  } else {
+                    pixData[destIdx + 3] = 0;
+                  }
+                }
+              }
+            }
+          }
+
+          pixCtx.putImageData(pixImgData, 0, 0);
+          CharacterSprite.spriteCanvas = pixelCanvas;
+        } else {
+          CharacterSprite.spriteCanvas = offCanvas;
+        }
+
+        CharacterSprite.isLoaded = true;
+      } catch (err) {
+        console.warn('Could not process sprite transparency:', err);
+      }
+    };
+
+    img.onerror = () => {
+      // Retry with fallback path
+      if (!img.src.includes('gorillaz_spritesheet')) {
+        img.src = '/assets/gorillaz_spritesheet.jpg';
+      }
+    };
+
+    img.src = '/assets/player_spritesheet.jpg';
+  }
+
   public draw(
     ctx: CanvasRenderingContext2D,
     x: number,
@@ -44,44 +238,165 @@ export class CharacterSprite {
     direction: Direction,
     isMoving: boolean,
     frameIndex: number, // 0 to 3
-    targetSize: number = 40, // drawn size on canvas (scaled from 16x16)
+    targetSize: number = 44, // drawn size on canvas
     timestamp: number = 0,
     tiltAngle: number = 0,
     verticalBob: number = 0,
     stationaryTime: number = 0,
     isInteracting: boolean = false
   ) {
+    // Ensure sprite is initialized
+    if (!CharacterSprite.loadAttempted) {
+      CharacterSprite.initSprite();
+    }
+
     ctx.save();
+    // Pixel-art crisp nearest-neighbor rendering
     ctx.imageSmoothingEnabled = false;
 
     // 1. Semi-transparent dark oval shadow under character's feet
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
     ctx.beginPath();
-    ctx.ellipse(x, y + 3, targetSize * 0.36, targetSize * 0.16, 0, 0, Math.PI * 2);
+    ctx.ellipse(x, y + 4, targetSize * 0.38, targetSize * 0.16, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Apply movement tilt (leaning into step) and interaction bob
+    // Apply movement tilt and bob
     ctx.translate(x, y);
     if (tiltAngle !== 0) {
       ctx.rotate(tiltAngle);
     }
     ctx.translate(-x, -y - verticalBob);
 
-    // 2. High-precision procedural 16x16 pixel renderer
-    this.drawProceduralPixelSprite(
-      ctx,
-      x,
-      y,
-      direction,
-      isMoving,
-      frameIndex,
-      targetSize,
-      timestamp,
-      stationaryTime,
-      isInteracting
-    );
+    // Calculate vertical offset for breathing / walking
+    let yOffset = 0;
+    const isStationary = !isMoving && stationaryTime > 200;
+    if (isStationary) {
+      yOffset = Math.sin((timestamp / 2000) * 2 * Math.PI) * 1.5;
+    } else if (isMoving) {
+      yOffset = (frameIndex === 1 || frameIndex === 3) ? -1.5 : 0;
+    }
+
+    // 2. Draw from loaded sprite sheet if ready, else procedural fallback
+    if (CharacterSprite.isLoaded && CharacterSprite.spriteCanvas) {
+      this.drawSpriteSheetFrame(
+        ctx,
+        CharacterSprite.spriteCanvas,
+        x,
+        y + yOffset,
+        direction,
+        isMoving,
+        frameIndex,
+        targetSize
+      );
+    } else {
+      this.drawProceduralPixelSprite(
+        ctx,
+        x,
+        y + yOffset,
+        direction,
+        isMoving,
+        frameIndex,
+        targetSize,
+        timestamp,
+        stationaryTime,
+        isInteracting
+      );
+    }
 
     ctx.restore();
+  }
+
+  /**
+   * Draw a specific frame from the 4x4 sprite sheet:
+   * Rows:
+   *   0: Down (Facing forward)
+   *   1: Up (Facing backward)
+   *   2: Side Profile (Left-facing frames: Col 0 = Neutral, Col 1 = Step A, Col 2 = Step B)
+   *   Right: Side Profile horizontally mirrored (flipX = true) for a seamless 4-frame stride
+   */
+  private drawSpriteSheetFrame(
+    ctx: CanvasRenderingContext2D,
+    sheet: HTMLCanvasElement,
+    x: number,
+    y: number,
+    direction: Direction,
+    isMoving: boolean,
+    frameIndex: number,
+    size: number
+  ) {
+    const cols = 4;
+    const rows = 4;
+    const cellW = sheet.width / cols;
+    const cellH = sheet.height / rows;
+
+    let rowIndex = 0;
+    let colIndex = 0;
+    let flipX = false;
+    const walkFrame = Math.abs(frameIndex % 4);
+
+    switch (direction) {
+      case 'down':
+        rowIndex = 0;
+        colIndex = isMoving ? walkFrame : 0;
+        flipX = false;
+        break;
+      case 'up':
+        rowIndex = 1;
+        colIndex = isMoving ? walkFrame : 0;
+        flipX = false;
+        break;
+      case 'left':
+        rowIndex = 2;
+        // 4-step walk cycle: Neutral (0) -> Stride A (1) -> Neutral (0) -> Stride B (2)
+        colIndex = isMoving ? (walkFrame === 0 ? 0 : walkFrame === 1 ? 1 : walkFrame === 2 ? 0 : 2) : 0;
+        flipX = false;
+        break;
+      case 'right':
+        rowIndex = 2;
+        // Use side profile mirrored horizontally for clean symmetric right movement
+        colIndex = isMoving ? (walkFrame === 0 ? 0 : walkFrame === 1 ? 1 : walkFrame === 2 ? 0 : 2) : 0;
+        flipX = true;
+        break;
+    }
+
+    const sx = colIndex * cellW;
+    const sy = rowIndex * cellH;
+
+    const destW = size;
+    const destH = size;
+    const destX = Math.round(x - destW / 2);
+    const destY = Math.round(y - destH + 4);
+
+    if (flipX) {
+      ctx.save();
+      ctx.translate(x, 0);
+      ctx.scale(-1, 1);
+      ctx.translate(-x, 0);
+      ctx.drawImage(
+        sheet,
+        sx,
+        sy,
+        cellW,
+        cellH,
+        destX,
+        destY,
+        destW,
+        destH
+      );
+      ctx.restore();
+    } else {
+      ctx.drawImage(
+        sheet,
+        sx,
+        sy,
+        cellW,
+        cellH,
+        destX,
+        destY,
+        destW,
+        destH
+      );
+    }
   }
 
   /**

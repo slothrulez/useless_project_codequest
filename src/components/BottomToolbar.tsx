@@ -24,7 +24,7 @@ export const BottomToolbar: React.FC<BottomToolbarProps> = ({
   return (
     <div
       id="bottom-left-toolbar"
-      className="absolute bottom-4 left-4 z-30 flex flex-col gap-1.5 select-none pointer-events-auto"
+      className="relative w-full z-10 flex flex-col gap-1.5 select-none pointer-events-auto"
     >
       {/* Wooden Signboard Header decoration */}
       <div className="flex items-center gap-1.5 px-2 py-0.5 bg-stone-900/80 border-t border-x border-amber-900/60 rounded-t text-[9px] font-pixel text-amber-500/80 uppercase tracking-widest backdrop-blur-xs">
@@ -40,7 +40,7 @@ export const BottomToolbar: React.FC<BottomToolbarProps> = ({
             soundFx.playButton();
             onOpenExplore();
           }}
-          className={`relative group flex items-center justify-between w-36 sm:w-44 px-3 py-2 rounded font-pixel text-[10px] tracking-wider uppercase transition-all duration-150 border-2 ${
+          className={`relative group flex items-center justify-between w-full px-3 py-2 rounded font-pixel text-[10px] tracking-wider uppercase transition-all duration-150 border-2 ${
             activeModal === 'explore'
               ? 'bg-amber-600 border-amber-300 text-stone-950 shadow-md translate-y-0.5'
               : 'bg-stone-800 hover:bg-stone-700/90 border-stone-600 hover:border-amber-500/70 text-amber-200 shadow-sm active:translate-y-0.5'
@@ -63,7 +63,7 @@ export const BottomToolbar: React.FC<BottomToolbarProps> = ({
             soundFx.playButton();
             onOpenLearn();
           }}
-          className={`relative group flex items-center justify-between w-36 sm:w-44 px-3 py-2 rounded font-pixel text-[10px] tracking-wider uppercase transition-all duration-150 border-2 ${
+          className={`relative group flex items-center justify-between w-full px-3 py-2 rounded font-pixel text-[10px] tracking-wider uppercase transition-all duration-150 border-2 ${
             activeModal === 'learn'
               ? 'bg-amber-600 border-amber-300 text-stone-950 shadow-md translate-y-0.5'
               : 'bg-stone-800 hover:bg-stone-700/90 border-stone-600 hover:border-amber-500/70 text-amber-200 shadow-sm active:translate-y-0.5'
@@ -86,11 +86,11 @@ export const BottomToolbar: React.FC<BottomToolbarProps> = ({
             soundFx.playButton();
             onOpenCommit();
           }}
-          className={`relative group flex items-center justify-between w-36 sm:w-44 px-3 py-2 rounded font-pixel text-[10px] tracking-wider uppercase transition-all duration-150 border-2 ${
+          className={`relative group flex items-center justify-between w-full px-3 py-2 rounded font-pixel text-[10px] tracking-wider uppercase transition-all duration-150 border-2 ${
             activeModal === 'commit'
-              ? 'bg-emerald-600 border-emerald-300 text-stone-950 shadow-md translate-y-0.5'
+              ? 'bg-amber-700 border-amber-400 text-amber-100 shadow-md translate-y-0.5'
               : dirtyFilesCount > 0
-              ? 'bg-amber-900/70 hover:bg-amber-800/80 border-amber-600 text-amber-100 shadow-sm animate-pulse'
+              ? 'bg-stone-850 hover:bg-stone-800 border-amber-600 text-amber-200 shadow-sm'
               : 'bg-stone-800 hover:bg-stone-700/90 border-stone-600 hover:border-amber-500/70 text-amber-200 shadow-sm'
           }`}
           style={{
@@ -102,11 +102,11 @@ export const BottomToolbar: React.FC<BottomToolbarProps> = ({
             <span>COMMIT</span>
           </div>
           {dirtyFilesCount > 0 ? (
-            <span className="bg-rose-600 text-white text-[9px] font-bold px-1.5 py-0.2 rounded-full font-mono">
+            <span className="bg-stone-900 border border-amber-600/80 text-amber-300 text-[9px] font-bold px-1.5 py-0.5 rounded font-pixel">
               {dirtyFilesCount}
             </span>
           ) : (
-            <span className="text-[8px] opacity-60 font-mono">[3]</span>
+            <span className="text-[8px] opacity-60 font-pixel text-stone-400">[3]</span>
           )}
         </button>
 
@@ -117,7 +117,7 @@ export const BottomToolbar: React.FC<BottomToolbarProps> = ({
             soundFx.playButton();
             onOpenGrow();
           }}
-          className={`relative group flex items-center justify-between w-36 sm:w-44 px-3 py-2 rounded font-pixel text-[10px] tracking-wider uppercase transition-all duration-150 border-2 ${
+          className={`relative group flex items-center justify-between w-full px-3 py-2 rounded font-pixel text-[10px] tracking-wider uppercase transition-all duration-150 border-2 ${
             activeModal === 'grow'
               ? 'bg-amber-600 border-amber-300 text-stone-950 shadow-md translate-y-0.5'
               : 'bg-stone-800 hover:bg-stone-700/90 border-stone-600 hover:border-amber-500/70 text-amber-200 shadow-sm active:translate-y-0.5'
@@ -127,10 +127,10 @@ export const BottomToolbar: React.FC<BottomToolbarProps> = ({
           }}
         >
           <div className="flex items-center gap-2">
-            <TrendingUp className="w-3.5 h-3.5 text-purple-400 group-hover:translate-y-[-2px] transition-transform" />
+            <TrendingUp className="w-3.5 h-3.5 text-amber-400 group-hover:translate-y-[-2px] transition-transform" />
             <span>GROW</span>
           </div>
-          <span className="text-[8px] opacity-60 font-mono">[4]</span>
+          <span className="text-[8px] opacity-60 font-pixel text-stone-400">[4]</span>
         </button>
 
         {/* CONNECT REPO Button */}
@@ -141,7 +141,7 @@ export const BottomToolbar: React.FC<BottomToolbarProps> = ({
               soundFx.playButton();
               onOpenConnectRepo();
             }}
-            className={`relative group flex items-center justify-between w-36 sm:w-44 px-3 py-2 rounded font-pixel text-[10px] tracking-wider uppercase transition-all duration-150 border-2 ${
+            className={`relative group flex items-center justify-between w-full px-3 py-2 rounded font-pixel text-[10px] tracking-wider uppercase transition-all duration-150 border-2 ${
               activeModal === 'connect'
                 ? 'bg-amber-600 border-amber-300 text-stone-950 shadow-md translate-y-0.5'
                 : 'bg-stone-800 hover:bg-stone-700/90 border-stone-600 hover:border-amber-500/70 text-amber-200 shadow-sm active:translate-y-0.5'
@@ -151,10 +151,10 @@ export const BottomToolbar: React.FC<BottomToolbarProps> = ({
             }}
           >
             <div className="flex items-center gap-2">
-              <FolderGit2 className="w-3.5 h-3.5 text-cyan-400 group-hover:scale-110 transition-transform" />
+              <FolderGit2 className="w-3.5 h-3.5 text-amber-400 group-hover:scale-110 transition-transform" />
               <span>REPO</span>
             </div>
-            <span className="text-[8px] opacity-60 font-mono">[5]</span>
+            <span className="text-[8px] opacity-60 font-pixel text-stone-400">[5]</span>
           </button>
         )}
       </div>

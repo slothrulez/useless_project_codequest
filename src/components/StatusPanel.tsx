@@ -92,36 +92,41 @@ export const StatusPanel: React.FC<StatusPanelProps> = ({
       case 'clean':
         return {
           text: commitsAhead > 0 ? `✓ Clean, ↑ ${commitsAhead} ahead` : '✓ Clean, ↕ In sync',
-          color: '#81c784',
-          accentBg: 'rgba(129, 199, 132, 0.15)',
+          color: '#a7f3d0',
+          accentBg: 'rgba(6, 78, 59, 0.45)',
+          border: '1px solid rgba(16, 185, 129, 0.35)',
           description: commitsAhead > 0 ? 'Ready to synchronize with Git Shrine' : 'Your world is clean & in sync'
         };
       case 'dirty':
         return {
-          text: `✗ Dirty`,
-          color: '#ff7043',
-          accentBg: 'rgba(255, 112, 67, 0.15)',
+          text: `✗ Dirty (${uncommittedCount} uncommitted)`,
+          color: '#fcd34d',
+          accentBg: 'rgba(120, 53, 15, 0.45)',
+          border: '1px solid rgba(217, 119, 6, 0.4)',
           description: 'Changes pending in working directory'
         };
       case 'conflict':
         return {
           text: '⚠ Merge Conflict',
-          color: '#ef4444',
-          accentBg: 'rgba(239, 68, 68, 0.25)',
+          color: '#fca5a5',
+          accentBg: 'rgba(136, 19, 55, 0.5)',
+          border: '1px solid rgba(225, 29, 72, 0.45)',
           description: 'Reality collapse: conflicting branch'
         };
       case 'ahead':
         return {
           text: `↑ Ahead ${commitsAhead || 1} commit${(commitsAhead || 1) > 1 ? 's' : ''}`,
-          color: '#38bdf8',
-          accentBg: 'rgba(56, 189, 248, 0.2)',
+          color: '#bae6fd',
+          accentBg: 'rgba(12, 74, 110, 0.45)',
+          border: '1px solid rgba(56, 189, 248, 0.35)',
           description: 'Ready to synchronize with Git Shrine'
         };
       case 'behind':
         return {
           text: `↓ Behind ${commitsBehind || 1} commit${(commitsBehind || 1) > 1 ? 's' : ''}`,
-          color: '#fbbf24',
-          accentBg: 'rgba(251, 191, 36, 0.2)',
+          color: '#fed7aa',
+          accentBg: 'rgba(124, 45, 18, 0.45)',
+          border: '1px solid rgba(249, 115, 22, 0.35)',
           description: 'Pull updates at Remote Origin'
         };
     }
@@ -154,31 +159,22 @@ export const StatusPanel: React.FC<StatusPanelProps> = ({
   return (
     <div
       id="status-panel"
-      className={`fixed z-30 pointer-events-auto select-none transition-all duration-300 ${
+      className={`relative w-full z-10 pointer-events-auto select-none transition-all duration-300 font-pixelated ${
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'
       }`}
       style={{
-        top: '10px',
-        left: '10px',
-        width: '330px',
-        backgroundColor: isFlashing ? 'rgba(250, 204, 21, 0.25)' : 'rgba(15, 15, 15, 0.92)',
+        backgroundColor: isFlashing ? 'rgba(41, 37, 36, 0.98)' : 'rgba(20, 18, 16, 0.94)',
         borderRadius: '8px',
         padding: '11px 12px',
-        border: isFlashing ? '1px solid #facc15' : '1px solid rgba(255, 255, 255, 0.14)',
-        boxShadow: isFlashing
-          ? '0 0 25px rgba(250, 204, 21, 0.9)'
-          : gitStatus === 'conflict'
-          ? '0 0 20px rgba(239, 68, 68, 0.5)'
-          : gitStatus === 'ahead'
-          ? '0 0 16px rgba(56, 189, 248, 0.35)'
-          : '0 4px 20px rgba(0, 0, 0, 0.7)'
+        border: isFlashing ? '1px solid #d97706' : '1px solid rgba(120, 113, 108, 0.3)',
+        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.75)'
       }}
     >
-      <div className="flex flex-col gap-1.5 font-mono">
+      <div className="flex flex-col gap-1.5 font-pixelated">
         {/* Top line: Repository name and controls */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5 min-w-0">
-            <span className="text-[10px] uppercase tracking-wider text-stone-500 font-semibold">Repo:</span>
+            <span className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold font-pixel text-[8px]">REPO:</span>
             <button
               onClick={() => {
                 if (onConnectRepo) {
@@ -190,17 +186,12 @@ export const StatusPanel: React.FC<StatusPanelProps> = ({
               title={repoPath ? `Repository: ${repoPath} (Click to switch or connect)` : `${repoName} (Click to connect)`}
             >
               <span
-                className="font-bold truncate group-hover:text-cyan-200 transition"
-                style={{
-                  fontSize: '13px',
-                  color: '#4dd0e1',
-                  letterSpacing: '0.02em'
-                }}
+                className="font-bold truncate text-amber-200 group-hover:text-amber-100 transition text-xs"
               >
                 {repoName}
               </span>
               {onConnectRepo && (
-                <FolderGit2 className="w-3 h-3 text-cyan-400/70 group-hover:text-cyan-300 shrink-0" />
+                <FolderGit2 className="w-3.5 h-3.5 text-amber-400/80 group-hover:text-amber-300 shrink-0" />
               )}
             </button>
           </div>
@@ -214,7 +205,7 @@ export const StatusPanel: React.FC<StatusPanelProps> = ({
                   onRefreshStatus();
                   soundFx.playButton();
                 }}
-                className="p-1 rounded hover:bg-stone-800 text-stone-400 hover:text-cyan-300 transition"
+                className="p-1 rounded hover:bg-stone-800 text-stone-400 hover:text-stone-200 transition"
                 title="Poll & refresh Git repository state"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
@@ -229,55 +220,21 @@ export const StatusPanel: React.FC<StatusPanelProps> = ({
                   onOpenSimulate();
                   soundFx.playButton();
                 }}
-                className="p-1 rounded hover:bg-stone-800 text-amber-400 hover:text-amber-200 transition"
+                className="p-1 rounded hover:bg-stone-800 text-stone-400 hover:text-amber-300 transition"
                 title="Git Scenario Playground"
               >
                 <Sparkles className="w-3.5 h-3.5" />
               </button>
             )}
-
-            {/* Nature forest ambience toggle */}
-            <button
-              id="status-ambience-toggle"
-              onClick={() => {
-                onToggleAmbience();
-                soundFx.playButton();
-              }}
-              className={`p-1 rounded transition ${
-                isAmbienceActive
-                  ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-500/50'
-                  : 'hover:bg-stone-800 text-stone-500 hover:text-stone-300'
-              }`}
-              title={isAmbienceActive ? 'Forest Ambience: Active' : 'Forest Ambience: Off'}
-            >
-              <Trees className="w-3.5 h-3.5" />
-            </button>
-
-            {/* Retro 8-bit sound effects toggle */}
-            <button
-              id="status-audio-toggle"
-              onClick={() => {
-                onToggleAudio();
-                soundFx.playButton();
-              }}
-              className="p-1 rounded hover:bg-stone-800 text-stone-400 hover:text-white transition"
-              title={isAudioMuted ? 'Unmute 8-bit sound' : 'Mute sound'}
-            >
-              {isAudioMuted ? <VolumeX className="w-3.5 h-3.5 text-red-400" /> : <Volume2 className="w-3.5 h-3.5 text-cyan-400" />}
-            </button>
           </div>
         </div>
 
-        {/* Second line: Current branch and Difficulty / Achievements */}
+        {/* Second line: Current branch */}
         <div className="flex items-center justify-between text-xs">
           <div className="flex items-center gap-1">
-            <span className="text-stone-400 text-[11px]">Branch:</span>
+            <span className="text-stone-400 text-[10px]">Branch:</span>
             <span
-              className="font-semibold"
-              style={{
-                fontSize: '12px',
-                color: '#81c784'
-              }}
+              className="font-semibold text-emerald-300 text-xs"
             >
               {branch}
             </span>
@@ -286,88 +243,32 @@ export const StatusPanel: React.FC<StatusPanelProps> = ({
                 soundFx.playButton();
                 onSwitchBranch();
               }}
-              className="text-[10px] text-cyan-400 hover:underline hover:text-cyan-300 transition ml-1"
+              className="text-[9px] text-stone-400 hover:underline hover:text-amber-300 transition ml-1"
               title="Switch or checkout branch"
             >
               [switch]
             </button>
           </div>
-
-          <div className="flex items-center gap-1.5 relative">
-            {/* Achievements button */}
-            <button
-              id="status-achievements-btn"
-              onClick={() => {
-                soundFx.playButton();
-                onOpenAchievements();
-              }}
-              className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-amber-950/40 hover:bg-amber-900/60 border border-amber-500/40 text-amber-300 text-[10px] transition font-bold"
-              title="View unlocked achievements and developer rank"
-            >
-              <Award className="w-3 h-3 text-amber-400" />
-              <span>{unlockedAchievementsCount}/{totalAchievementsCount}</span>
-            </button>
-
-            {/* Difficulty selector */}
-            <button
-              id="status-difficulty-btn"
-              onClick={() => {
-                soundFx.playButton();
-                setShowDifficultyMenu((prev) => !prev);
-              }}
-              className="px-1.5 py-0.5 rounded bg-stone-800 hover:bg-stone-700 border border-stone-700 text-stone-300 text-[10px] capitalize transition"
-              title={`Difficulty: ${difficulty} (Click to change)`}
-            >
-              {difficulty}
-            </button>
-
-            {/* Difficulty popup menu */}
-            {showDifficultyMenu && (
-              <div
-                className="absolute right-0 top-6 z-50 bg-stone-900 border border-stone-700 rounded shadow-xl p-1.5 flex flex-col gap-1 w-32"
-                onClick={(e) => e.stopPropagation()}
-              >
-                {(['easy', 'normal', 'hardcore'] as DifficultyLevel[]).map((level) => (
-                  <button
-                    key={level}
-                    onClick={() => {
-                      soundFx.playButton();
-                      onSelectDifficulty(level);
-                      setShowDifficultyMenu(false);
-                    }}
-                    className={`px-2 py-1 text-left text-[10px] rounded capitalize transition ${
-                      difficulty === level
-                        ? 'bg-cyan-950 text-cyan-200 font-bold border border-cyan-500/50'
-                        : 'text-stone-400 hover:bg-stone-800 hover:text-stone-200'
-                    }`}
-                  >
-                    {level}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
         </div>
 
-        {/* Third line: Status: ✓ Clean | ✗ Dirty | ⚠ Merge Conflict | ↑ Ahead | ↓ Behind */}
+        {/* Third line: Status pill: Clean | Dirty | Merge Conflict | Ahead | Behind */}
         <div className="flex items-center gap-1">
           <button
             onClick={() => {
               soundFx.playButton();
               onCycleStatus();
             }}
-            className={`flex-1 text-left rounded px-2 py-0.5 transition-all flex items-center justify-between border border-white/10 ${
-              gitStatus === 'conflict' ? 'animate-pulse' : ''
-            }`}
+            className="flex-1 text-left rounded px-2.5 py-1 transition-all flex items-center justify-between"
             style={{
               fontSize: '11px',
               color: statusInfo.color,
-              backgroundColor: statusInfo.accentBg
+              backgroundColor: statusInfo.accentBg,
+              border: statusInfo.border
             }}
             title="Click to cycle status or inspect details"
           >
             <span className="font-semibold">{statusInfo.text}</span>
-            <span className="text-[9px] opacity-60">cycle</span>
+            <span className="text-[9px] opacity-60 text-stone-400">[cycle]</span>
           </button>
 
           {/* Action buttons if ahead or behind */}
@@ -377,7 +278,7 @@ export const StatusPanel: React.FC<StatusPanelProps> = ({
                 soundFx.playPushSuccess();
                 onPushRemote();
               }}
-              className="px-2 py-0.5 bg-sky-900 hover:bg-sky-800 border border-sky-400 text-sky-200 text-[10px] rounded font-bold flex items-center gap-1 animate-pulse"
+              className="px-2 py-1 bg-stone-800 hover:bg-stone-700 border border-sky-700 text-sky-200 text-[10px] rounded font-bold flex items-center gap-1 transition"
               title="Push commits upstream to Remote Origin"
             >
               <UploadCloud className="w-3 h-3" />
@@ -391,7 +292,7 @@ export const StatusPanel: React.FC<StatusPanelProps> = ({
                 soundFx.playPushSuccess();
                 onPullRemote();
               }}
-              className="px-2 py-0.5 bg-amber-900 hover:bg-amber-800 border border-amber-400 text-amber-200 text-[10px] rounded font-bold flex items-center gap-1 animate-pulse"
+              className="px-2 py-1 bg-stone-800 hover:bg-stone-700 border border-amber-700 text-amber-200 text-[10px] rounded font-bold flex items-center gap-1 transition"
               title="Pull commits from Remote Origin"
             >
               <span>PULL</span>
@@ -401,12 +302,12 @@ export const StatusPanel: React.FC<StatusPanelProps> = ({
 
         {/* Progression Stage & Goal Line */}
         {progressionStage && (
-          <div className="bg-black/50 border border-white/5 rounded px-2 py-1 text-[10.5px]">
+          <div className="bg-stone-900/90 border border-stone-800 rounded px-2 py-1 text-[10.5px]">
             <div className="flex items-center justify-between">
               <span className="text-stone-400 font-semibold">{progressionStage.title}</span>
-              <span className="text-[9px] text-stone-500">Goal:</span>
+              <span className="text-[9px] text-stone-500 font-pixel text-[8px]">GOAL</span>
             </div>
-            <div className="text-stone-300 text-[10px] mt-0.5 leading-tight text-amber-200/90 font-mono">
+            <div className="text-stone-300 text-[10px] mt-0.5 leading-tight text-amber-200/90">
               &bull; {progressionStage.currentGoal}
             </div>
           </div>
@@ -414,27 +315,27 @@ export const StatusPanel: React.FC<StatusPanelProps> = ({
 
         {/* Tutorial / Quest Hint Line (For Easy / Normal modes) */}
         {difficulty !== 'hardcore' && tutorialObjective && (
-          <div className="bg-cyan-950/40 border border-cyan-800/40 rounded px-2 py-1 text-[10px] text-cyan-300 flex items-center gap-1.5 animate-pulse">
-            <Compass className="w-3 h-3 shrink-0 text-cyan-400" />
+          <div className="bg-stone-900/90 border border-stone-800 rounded px-2 py-1 text-[10px] text-stone-300 flex items-center gap-1.5">
+            <Compass className="w-3 h-3 shrink-0 text-amber-400" />
             <span className="truncate">{tutorialObjective}</span>
           </div>
         )}
 
         {/* Uncommitted and Untracked counters */}
-        <div className="grid grid-cols-2 gap-1 text-[11px] bg-black/40 rounded px-2 py-1 border border-white/5">
+        <div className="grid grid-cols-2 gap-1 text-[11px] bg-stone-900/90 rounded px-2 py-1 border border-stone-800">
           <div className="text-stone-400">
-            Uncommitted: <span className={uncommittedCount > 0 ? 'text-amber-400 font-semibold' : 'text-stone-300'}>{uncommittedCount}</span>
+            Uncommitted: <span className={uncommittedCount > 0 ? 'text-amber-300 font-semibold' : 'text-stone-300'}>{uncommittedCount}</span>
           </div>
           <div className="text-stone-400">
-            Untracked: <span className={untrackedCount > 0 ? 'text-purple-400 font-semibold' : 'text-stone-300'}>{untrackedCount}</span>
+            Untracked: <span className={untrackedCount > 0 ? 'text-stone-300 font-semibold' : 'text-stone-400'}>{untrackedCount}</span>
           </div>
         </div>
 
         {/* Last commit summary */}
-        <div className="flex flex-col text-[10.5px] leading-tight text-stone-400 border-t border-white/10 pt-1.5">
+        <div className="flex flex-col text-[10.5px] leading-tight text-stone-400 border-t border-stone-800 pt-1.5">
           <div className="truncate">
             <span className="text-stone-500">Last commit: </span>
-            <span className="text-cyan-300 font-mono font-semibold">{lastCommit.hash}</span>
+            <span className="text-amber-300 font-semibold">{lastCommit.hash}</span>
             <span className="text-stone-300"> - {lastCommit.message}</span>
           </div>
           <div className="truncate text-stone-500 text-[10px] mt-0.5">
@@ -443,9 +344,9 @@ export const StatusPanel: React.FC<StatusPanelProps> = ({
         </div>
 
         {/* Controls info */}
-        <div className="flex items-center justify-between text-[10px] text-stone-500 pt-0.5 border-t border-white/5">
-          <span>WASD / Arrows: Move</span>
-          <span>E: Interact</span>
+        <div className="flex items-center justify-between text-[9px] text-stone-500 pt-0.5 border-t border-stone-800">
+          <span>WASD / ARROWS: MOVE</span>
+          <span>E: INTERACT</span>
         </div>
       </div>
     </div>

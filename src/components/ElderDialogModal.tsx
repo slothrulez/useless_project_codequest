@@ -48,21 +48,21 @@ export const ElderDialogModal: React.FC<ElderDialogModalProps> = ({
     >
       <div
         id="elder-dialog-box"
-        className="relative w-full max-w-lg bg-stone-900 border-4 border-amber-800/90 rounded-lg shadow-2xl p-4 sm:p-6 text-stone-200 overflow-hidden"
+        className="relative w-full max-w-lg bg-stone-900 border-4 border-amber-800/90 rounded-lg shadow-2xl p-4 sm:p-6 text-stone-200 overflow-hidden font-pixelated"
         onClick={(e) => e.stopPropagation()}
         style={{
-          boxShadow: '0 0 40px rgba(180, 83, 9, 0.25), inset 0 0 20px rgba(0,0,0,0.8)'
+          boxShadow: '0 0 30px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0,0,0,0.8)'
         }}
       >
         {/* Stone frame headers & close button */}
-        <div className="flex items-center justify-between border-b-2 border-stone-700 pb-3 mb-4">
+        <div className="flex items-center justify-between border-b-2 border-stone-800 pb-3 mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-stone-800 border-2 border-amber-600 flex items-center justify-center text-amber-300 shadow-inner">
-              <Wand2 className="w-5 h-5 animate-pulse" />
+            <div className="w-10 h-10 rounded-lg bg-stone-950 border border-amber-700/80 flex items-center justify-center text-amber-300">
+              <Wand2 className="w-5 h-5" />
             </div>
             <div>
               <h2 className="text-xs sm:text-sm font-pixel text-amber-300">THE ELDER</h2>
-              <p className="text-[10px] font-retro text-stone-400">Keeper of the Ancient Repository</p>
+              <p className="text-[10px] font-pixelated text-stone-400">Keeper of the Ancient Repository</p>
             </div>
           </div>
           <button
@@ -77,17 +77,17 @@ export const ElderDialogModal: React.FC<ElderDialogModalProps> = ({
         </div>
 
         {/* The Elder's Signature Dialogue Box */}
-        <div className="bg-stone-950/90 border-2 border-amber-900/60 rounded p-4 mb-4 relative">
-          <div className="text-[10px] font-pixel text-amber-500 mb-1 flex items-center gap-1.5">
+        <div className="bg-stone-950 border border-amber-900/60 rounded p-4 mb-4 relative">
+          <div className="text-[10px] font-pixel text-amber-400 mb-1 flex items-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5" />
             <span>ELDER'S PROCLAMATION:</span>
           </div>
-          <blockquote className="text-sm sm:text-base font-retro text-amber-100 italic tracking-wide leading-relaxed pl-2 border-l-2 border-amber-500">
+          <blockquote className="text-xs sm:text-sm font-pixel text-amber-200 tracking-wide leading-relaxed pl-2 border-l-2 border-amber-600">
             &ldquo;Seek issues. Move forward. Solve wisdom.&rdquo;
           </blockquote>
 
           {/* Dynamic reaction to Git status */}
-          <div className="mt-3 pt-3 border-t border-stone-800 text-xs font-mono">
+          <div className="mt-3 pt-3 border-t border-stone-800 text-xs font-pixelated">
             {isClean ? (
               <div className="flex items-start gap-2 text-emerald-400">
                 <ShieldCheck className="w-4 h-4 shrink-0 mt-0.5" />
@@ -97,12 +97,12 @@ export const ElderDialogModal: React.FC<ElderDialogModalProps> = ({
               </div>
             ) : (
               <div className="flex items-start gap-2 text-amber-300">
-                <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-rose-400 animate-bounce" />
+                <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-rose-400" />
                 <div>
-                  <p className="text-rose-300 font-semibold mb-1">
+                  <p className="text-rose-300 font-pixel text-[9px] mb-1">
                     &ldquo;Ah, traveler... your working tree is restless! You have {dirtyCount} uncommitted changes.&rdquo;
                   </p>
-                  <p className="text-stone-400 text-[11px]">
+                  <p className="text-stone-400 text-[10.5px]">
                     Stage your deeds with reverence before entering the Git Shrine, lest merge conflicts plague your path.
                   </p>
                   <button
@@ -110,7 +110,7 @@ export const ElderDialogModal: React.FC<ElderDialogModalProps> = ({
                       onClose();
                       onOpenCommit();
                     }}
-                    className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-700 hover:bg-amber-600 text-stone-950 font-pixel text-[9px] rounded font-bold transition"
+                    className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 bg-stone-800 hover:bg-stone-700 border border-amber-600 text-amber-200 font-pixel text-[8px] rounded font-bold transition"
                   >
                     Forge Commit Now &rarr;
                   </button>
@@ -121,7 +121,7 @@ export const ElderDialogModal: React.FC<ElderDialogModalProps> = ({
         </div>
 
         {/* Tab Selection */}
-        <div className="flex border-b border-stone-800 mb-3 gap-1 text-[10px] font-pixel">
+        <div className="flex border-b border-stone-800 mb-3 gap-1 text-[9px] font-pixel">
           <button
             onClick={() => {
               setActiveTab('wisdom');
@@ -129,7 +129,7 @@ export const ElderDialogModal: React.FC<ElderDialogModalProps> = ({
             }}
             className={`px-3 py-1.5 rounded-t transition ${
               activeTab === 'wisdom'
-                ? 'bg-stone-800 text-amber-300 border-t-2 border-amber-500'
+                ? 'bg-stone-950 text-amber-300 border-t-2 border-amber-600'
                 : 'text-stone-400 hover:text-stone-200'
             }`}
           >
@@ -142,7 +142,7 @@ export const ElderDialogModal: React.FC<ElderDialogModalProps> = ({
             }}
             className={`px-3 py-1.5 rounded-t transition ${
               activeTab === 'oracle'
-                ? 'bg-stone-800 text-amber-300 border-t-2 border-amber-500'
+                ? 'bg-stone-950 text-amber-300 border-t-2 border-amber-600'
                 : 'text-stone-400 hover:text-stone-200'
             }`}
           >
@@ -155,7 +155,7 @@ export const ElderDialogModal: React.FC<ElderDialogModalProps> = ({
             }}
             className={`px-3 py-1.5 rounded-t transition ${
               activeTab === 'quest'
-                ? 'bg-stone-800 text-amber-300 border-t-2 border-amber-500'
+                ? 'bg-stone-950 text-amber-300 border-t-2 border-amber-600'
                 : 'text-stone-400 hover:text-stone-200'
             }`}
           >
@@ -165,7 +165,7 @@ export const ElderDialogModal: React.FC<ElderDialogModalProps> = ({
 
         {/* Tab Contents */}
         {activeTab === 'wisdom' && (
-          <div className="space-y-2 text-xs font-mono text-stone-300 max-h-48 overflow-y-auto pr-1">
+          <div className="space-y-2 text-xs font-pixelated text-stone-300 max-h-48 overflow-y-auto pr-1">
             <div className="p-2.5 bg-stone-950 rounded border border-stone-800">
               <div className="font-pixel text-[9px] text-amber-400 mb-1">THE THREE REALMS:</div>
               <p className="text-stone-300 text-[11px] leading-relaxed">
@@ -184,9 +184,9 @@ export const ElderDialogModal: React.FC<ElderDialogModalProps> = ({
                   setClaimedWisdom(true);
                   onAddWisdomXP();
                 }}
-                className="w-full py-2 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-stone-950 font-pixel text-[9px] rounded font-bold transition flex items-center justify-center gap-1.5 shadow"
+                className="w-full py-2 bg-stone-800 hover:bg-stone-700 border border-amber-600 text-amber-200 font-pixel text-[9px] rounded font-bold transition flex items-center justify-center gap-1.5 shadow"
               >
-                <Sparkles className="w-3.5 h-3.5" />
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                 Receive Elder Blessing (+50 XP)
               </button>
             ) : (
@@ -198,8 +198,8 @@ export const ElderDialogModal: React.FC<ElderDialogModalProps> = ({
         )}
 
         {activeTab === 'oracle' && (
-          <div className="space-y-2 max-h-48 overflow-y-auto pr-1 text-xs">
-            <p className="text-[11px] font-retro text-stone-400 mb-2">Select a trial of wisdom to consult the Oracle:</p>
+          <div className="space-y-2 max-h-48 overflow-y-auto pr-1 text-xs font-pixelated">
+            <p className="text-[10.5px] font-pixelated text-stone-400 mb-2">Select a trial of wisdom to consult the Oracle:</p>
             <div className="space-y-1.5">
               {gitTips.map((tip, idx) => (
                 <button
@@ -208,7 +208,7 @@ export const ElderDialogModal: React.FC<ElderDialogModalProps> = ({
                     soundFx.playInteract();
                     setOracleAnswer(tip.a);
                   }}
-                  className="w-full text-left p-2 rounded bg-stone-950 hover:bg-stone-800/80 border border-stone-800 text-stone-300 hover:text-amber-200 transition text-[11px] font-mono flex items-center justify-between"
+                  className="w-full text-left p-2 rounded bg-stone-950 hover:bg-stone-800 border border-stone-800 text-stone-300 hover:text-amber-200 transition text-[11px] font-pixelated flex items-center justify-between"
                 >
                   <span>{tip.q}</span>
                   <span className="text-amber-400 text-[9px] font-pixel shrink-0 ml-2">&gt;</span>
@@ -216,7 +216,7 @@ export const ElderDialogModal: React.FC<ElderDialogModalProps> = ({
               ))}
             </div>
             {oracleAnswer && (
-              <div className="mt-3 p-3 bg-amber-950/40 border border-amber-600/60 rounded text-amber-200 text-xs font-mono">
+              <div className="mt-3 p-3 bg-stone-950 border border-amber-700/80 rounded text-amber-200 text-xs font-pixelated">
                 <div className="font-pixel text-[9px] text-amber-400 mb-1">ORACLE SPEAKS:</div>
                 <p>{oracleAnswer}</p>
               </div>
@@ -225,22 +225,22 @@ export const ElderDialogModal: React.FC<ElderDialogModalProps> = ({
         )}
 
         {activeTab === 'quest' && (
-          <div className="space-y-2 text-xs font-mono max-h-48 overflow-y-auto pr-1">
+          <div className="space-y-2 text-xs font-pixelated max-h-48 overflow-y-auto pr-1">
             <div className="p-2.5 bg-stone-950 rounded border border-stone-800 flex items-start justify-between">
               <div>
                 <div className="font-pixel text-[9px] text-amber-300">QUEST 1: THE CLEAN TREE</div>
-                <p className="text-[11px] text-stone-400 mt-1">Commit all pending alterations to achieve a pure clean working tree status.</p>
+                <p className="text-[10.5px] text-stone-400 mt-1">Commit all pending alterations to achieve a pure clean working tree status.</p>
               </div>
-              <span className={`px-2 py-0.5 text-[8px] font-pixel rounded ${isClean ? 'bg-emerald-900 text-emerald-300' : 'bg-stone-800 text-stone-400'}`}>
+              <span className={`px-2 py-0.5 text-[8px] font-pixel rounded ${isClean ? 'bg-stone-900 border border-emerald-800 text-emerald-300' : 'bg-stone-900 border border-stone-700 text-stone-400'}`}>
                 {isClean ? 'COMPLETED' : 'IN PROGRESS'}
               </span>
             </div>
             <div className="p-2.5 bg-stone-950 rounded border border-stone-800 flex items-start justify-between">
               <div>
                 <div className="font-pixel text-[9px] text-amber-300">QUEST 2: EXPLORE THE COTTAGES</div>
-                <p className="text-[11px] text-stone-400 mt-1">Visit src/, README.md, package.json, and .gitignore to learn their duties.</p>
+                <p className="text-[10.5px] text-stone-400 mt-1">Visit src/, README.md, package.json, and .gitignore to learn their duties.</p>
               </div>
-              <span className="px-2 py-0.5 text-[8px] font-pixel rounded bg-amber-900/60 text-amber-300">
+              <span className="px-2 py-0.5 text-[8px] font-pixel rounded bg-stone-900 border border-amber-800 text-amber-300">
                 ACTIVE
               </span>
             </div>

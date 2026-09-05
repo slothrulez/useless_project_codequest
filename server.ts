@@ -206,6 +206,448 @@ async function startServer() {
   const app = express();
   app.use(express.json());
 
+  // Helper to extract GitHub token
+  const getAuthToken = (req: express.Request): string => {
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      return authHeader.substring(7).trim();
+    }
+    if (req.body && req.body.token) {
+      return req.body.token.trim();
+    }
+    if (req.query && typeof req.query.token === 'string') {
+      return req.query.token.trim();
+    }
+    return (process.env.GITHUB_TOKEN || '').trim();
+  };
+
+  // GitHub Headers helper
+  const getGitHubHeaders = (token?: string) => {
+    const headers: Record<string, string> = {
+      'User-Agent': 'CodeQuest-RPG-App',
+      'Accept': 'application/vnd.github.v3+json'
+    };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    return headers;
+  };
+
+  // 1. OAuth URL Provider (GitHub & Google)
+  app.get('/api/auth/github/url', (req, res) => {
+    const clientId = process.env.GITHUB_CLIENT_ID || process.env.CLIENT_ID || '';
+    const appUrl = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
+    const redirectUri = `${appUrl}/auth/callback`;
+    const params = new URLSearchParams({
+      client_id: clientId,
+      redirect_uri: redirectUri,
+      scope: 'read:user,repo',
+      allow_signup: 'true'
+    });
+    const url = `https://github.com/login/oauth/authorize?${params.toString()}`;
+    res.json({
+      url,
+      configured: Boolean(clientId),
+      redirectUri,
+      hasEnvToken: Boolean(process.env.GITHUB_TOKEN)
+    });
+  });
+
+  app.get('/api/auth/google/url', (req, res) => {
+    const clientId = process.env.GOOGLE_CLIENT_ID || process.env.CLIENT_ID || '';
+    const appUrl = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
+    const redirectUri = `${appUrl}/auth/google/callback`;
+    const params = new URLSearchParams({
+      client_id: clientId,
+      redirect_uri: redirectUri,
+      response_type: 'code',
+      scope: 'openid profile email',
+      access_type: 'offline',
+      prompt: 'select_account'
+    });
+    const url = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+    res.json({
+      url,
+      configured: Boolean(clientId),
+      redirectUri
+    });
+  });
+
+  // 2. OAuth Callback Handlers (GitHub & Google)
+  const handleOAuthCallback = async (req: express.Request, res: express.Response) => {
+    const { code } = req.query;
+    if (!code || typeof code !== 'string') {
+      return res.send(`<html><body><script>if (window.opener) window.close(); else window.location.href = '/';</script></body></html>`);
+    }
+
+    const clientId = process.env.GITHUB_CLIENT_ID || process.env.CLIENT_ID || '';
+    const clientSecret = process.env.GITHUB_CLIENT_SECRET || process.env.CLIENT_SECRET || '';
+
+    try {
+      const tokenRes = await fetch('https://github.com/login/oauth/access_token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'User-Agent': 'CodeQuest-RPG-App'
+        },
+        body: JSON.stringify({
+          client_id: clientId,
+          client_secret: clientSecret,
+          code
+        })
+      });
+
+      const tokenData = await tokenRes.json();
+      const accessToken = tokenData.access_token || '';
+
+      res.send(`
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>Authentication Successful</title>
+            <style>
+              body {
+                background: #09090b;
+                color: #f59e0b;
+                font-family: monospace;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+                margin: 0;
+              }
+              .card {
+                text-align: center;
+                padding: 24px;
+                border: 1px solid #78350f;
+                background: #1c1917;
+                border-radius: 8px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+              }
+            </style>
+          </head>
+          <body>
+            <div class="card">
+              <h2 style="margin: 0 0 12px 0;">⚔️ CODEQUEST ⚔️</h2>
+              <p style="margin: 0 0 8px 0; color: #10b981; font-weight: bold;">GitHub Authenticated!</p>
+              <p style="color: #a8a29e; font-size: 12px; margin: 0;">Entering CodeQuest realm...</p>
+            </div>
+            <script>
+              try {
+                if (window.opener) {
+                  window.opener.postMessage({
+                    type: 'OAUTH_AUTH_SUCCESS',
+                    token: ${JSON.stringify(accessToken)}
+                  }, '*');
+                  setTimeout(function() { window.close(); }, 300);
+                } else {
+                  window.location.href = '/';
+                }
+              } catch (e) {
+                console.error(e);
+              }
+            </script>
+          </body>
+        </html>
+      `);
+    } catch (err: any) {
+      res.status(500).send(`<html><body><p>Authentication error: ${err.message}</p></body></html>`);
+    }
+  };
+
+  const handleGoogleOAuthCallback = async (req: express.Request, res: express.Response) => {
+    const { code } = req.query;
+    if (!code || typeof code !== 'string') {
+      return res.send(`<html><body><script>if (window.opener) window.close(); else window.location.href = '/';</script></body></html>`);
+    }
+
+    const clientId = process.env.GOOGLE_CLIENT_ID || process.env.CLIENT_ID || '';
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET || process.env.CLIENT_SECRET || '';
+    const appUrl = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
+    const redirectUri = `${appUrl}/auth/google/callback`;
+
+    try {
+      const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+          code,
+          client_id: clientId,
+          client_secret: clientSecret,
+          redirect_uri: redirectUri,
+          grant_type: 'authorization_code'
+        }).toString()
+      });
+
+      const tokenData = await tokenRes.json();
+      const accessToken = tokenData.access_token || '';
+
+      // Fetch Google user profile
+      let googleUser = {
+        login: 'hero',
+        id: Date.now(),
+        name: 'Google Hero',
+        avatar_url: 'https://lh3.googleusercontent.com/a/default-user',
+        html_url: 'https://google.com',
+        bio: 'Google CodeQuest Explorer',
+        public_repos: 1,
+        followers: 1,
+        following: 1
+      };
+
+      if (accessToken) {
+        try {
+          const profileRes = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+            headers: { Authorization: `Bearer ${accessToken}` }
+          });
+          if (profileRes.ok) {
+            const profile = await profileRes.json();
+            const username = profile.email ? profile.email.split('@')[0] : (profile.name || 'Hero');
+            googleUser = {
+              login: username,
+              id: parseInt(profile.id, 10) || Date.now(),
+              name: profile.name || username,
+              avatar_url: profile.picture || 'https://lh3.googleusercontent.com/a/default-user',
+              html_url: 'https://google.com',
+              bio: `Google account: ${profile.email || username}`,
+              public_repos: 1,
+              followers: 1,
+              following: 1
+            };
+          }
+        } catch {
+          // Keep default googleUser
+        }
+      }
+
+      res.send(`
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>Google Sign-In Successful</title>
+            <style>
+              body {
+                background: #09090b;
+                color: #f59e0b;
+                font-family: monospace;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+                margin: 0;
+              }
+              .card {
+                text-align: center;
+                padding: 24px;
+                border: 1px solid #78350f;
+                background: #1c1917;
+                border-radius: 8px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+              }
+            </style>
+          </head>
+          <body>
+            <div class="card">
+              <h2 style="margin: 0 0 12px 0;">⚔️ CODEQUEST ⚔️</h2>
+              <p style="margin: 0 0 8px 0; color: #10b981; font-weight: bold;">Google Authenticated!</p>
+              <p style="color: #a8a29e; font-size: 12px; margin: 0;">Welcome, ${googleUser.name}! Entering realm...</p>
+            </div>
+            <script>
+              try {
+                if (window.opener) {
+                  window.opener.postMessage({
+                    type: 'GOOGLE_AUTH_SUCCESS',
+                    token: ${JSON.stringify(accessToken || 'google_auth_token')},
+                    user: ${JSON.stringify(googleUser)}
+                  }, '*');
+                  setTimeout(function() { window.close(); }, 300);
+                } else {
+                  window.location.href = '/';
+                }
+              } catch (e) {
+                console.error(e);
+              }
+            </script>
+          </body>
+        </html>
+      `);
+    } catch (err: any) {
+      res.status(500).send(`<html><body><p>Google authentication error: ${err.message}</p></body></html>`);
+    }
+  };
+
+  app.get('/auth/callback', handleOAuthCallback);
+  app.get('/auth/callback/', handleOAuthCallback);
+  app.get('/auth/google/callback', handleGoogleOAuthCallback);
+  app.get('/auth/google/callback/', handleGoogleOAuthCallback);
+
+  // 3. Google Direct / Token Verification Endpoint
+  app.post('/api/google/direct-auth', (req, res) => {
+    try {
+      const { email, name, picture } = req.body;
+      const cleanEmail = (email || 'adventurer@gmail.com').trim();
+      const login = cleanEmail.includes('@') ? cleanEmail.split('@')[0] : cleanEmail;
+      const cleanName = (name || login || 'Google Adventurer').trim();
+      const avatarUrl = picture || `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(login)}`;
+
+      const user = {
+        login,
+        id: Math.floor(Math.random() * 1000000) + 1000,
+        name: cleanName,
+        avatar_url: avatarUrl,
+        html_url: `https://google.com/u/${login}`,
+        bio: `Connected with Google (${cleanEmail})`,
+        public_repos: 1,
+        followers: 1,
+        following: 1
+      };
+
+      res.json({
+        success: true,
+        user,
+        token: `google_direct_${Date.now()}`
+      });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // 4. Verify GitHub Token & Retrieve Profile
+  app.post('/api/github/verify', async (req, res) => {
+    try {
+      const token = getAuthToken(req);
+      if (!token) {
+        return res.status(401).json({ success: false, error: 'No GitHub authentication token provided' });
+      }
+
+      const userRes = await fetch('https://api.github.com/user', {
+        headers: getGitHubHeaders(token)
+      });
+
+      if (!userRes.ok) {
+        const errText = await userRes.text();
+        return res.status(userRes.status).json({ success: false, error: `GitHub Authentication failed: ${errText}` });
+      }
+
+      const user = await userRes.json();
+      res.json({
+        success: true,
+        user: {
+          login: user.login,
+          id: user.id,
+          name: user.name,
+          avatar_url: user.avatar_url,
+          html_url: user.html_url,
+          bio: user.bio,
+          public_repos: user.public_repos,
+          followers: user.followers,
+          following: user.following,
+          company: user.company,
+          location: user.location
+        }
+      });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // 4. Fetch User Repositories
+  app.get('/api/github/repos', async (req, res) => {
+    try {
+      const token = getAuthToken(req);
+      if (!token) {
+        return res.status(401).json({ success: false, error: 'No GitHub token provided' });
+      }
+
+      const reposRes = await fetch('https://api.github.com/user/repos?sort=updated&per_page=100&type=all', {
+        headers: getGitHubHeaders(token)
+      });
+
+      if (!reposRes.ok) {
+        return res.status(reposRes.status).json({ success: false, error: 'Failed to fetch repositories' });
+      }
+
+      const repos = await reposRes.json();
+      res.json({ success: true, repos });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // 5. Fetch Full Real Data for a Repository
+  app.post('/api/github/repo-data', async (req, res) => {
+    try {
+      const token = getAuthToken(req);
+      const { owner, repo, branch } = req.body;
+
+      if (!owner || !repo) {
+        return res.status(400).json({ success: false, error: 'Owner and repo name are required' });
+      }
+
+      const headers = getGitHubHeaders(token);
+
+      // (a) Repo metadata
+      const repoRes = await fetch(`https://api.github.com/repos/${owner}/${repo}`, { headers });
+      if (!repoRes.ok) {
+        return res.status(repoRes.status).json({ success: false, error: `Repository not found or access denied: ${owner}/${repo}` });
+      }
+      const repoDetails = await repoRes.json();
+      const activeBranch = branch || repoDetails.default_branch || 'main';
+
+      // (b) Parallel fetch branches, commits, tree, readme, issues, pulls, languages
+      const [branchesRes, commitsRes, treeRes, readmeRes, issuesRes, pullsRes, langRes] = await Promise.all([
+        fetch(`https://api.github.com/repos/${owner}/${repo}/branches?per_page=50`, { headers }).catch(() => null),
+        fetch(`https://api.github.com/repos/${owner}/${repo}/commits?per_page=30&sha=${activeBranch}`, { headers }).catch(() => null),
+        fetch(`https://api.github.com/repos/${owner}/${repo}/git/trees/${activeBranch}?recursive=1`, { headers }).catch(() => null),
+        fetch(`https://api.github.com/repos/${owner}/${repo}/readme`, { headers }).catch(() => null),
+        fetch(`https://api.github.com/repos/${owner}/${repo}/issues?state=all&per_page=20`, { headers }).catch(() => null),
+        fetch(`https://api.github.com/repos/${owner}/${repo}/pulls?state=all&per_page=20`, { headers }).catch(() => null),
+        fetch(`https://api.github.com/repos/${owner}/${repo}/languages`, { headers }).catch(() => null)
+      ]);
+
+      const branchesData = branchesRes && branchesRes.ok ? await branchesRes.json() : [];
+      const commitsData = commitsRes && commitsRes.ok ? await commitsRes.json() : [];
+      const treeData = treeRes && treeRes.ok ? await treeRes.json() : { tree: [] };
+      const readmeData = readmeRes && readmeRes.ok ? await readmeRes.json() : null;
+      const issuesRaw = issuesRes && issuesRes.ok ? await issuesRes.json() : [];
+      const pullsData = pullsRes && pullsRes.ok ? await pullsRes.json() : [];
+      const languagesData = langRes && langRes.ok ? await langRes.json() : {};
+
+      // Filter issues to separate pure issues from PRs if needed
+      const pureIssues = Array.isArray(issuesRaw) ? issuesRaw.filter((i: any) => !i.pull_request) : [];
+
+      // Base64 decode README
+      let decodedReadme: string | null = null;
+      if (readmeData && readmeData.content) {
+        try {
+          decodedReadme = Buffer.from(readmeData.content, 'base64').toString('utf8');
+        } catch {
+          decodedReadme = null;
+        }
+      }
+
+      res.json({
+        success: true,
+        data: {
+          repo: repoDetails,
+          activeBranch,
+          branches: Array.isArray(branchesData) ? branchesData.map((b: any) => b.name) : [activeBranch],
+          commits: Array.isArray(commitsData) ? commitsData : [],
+          tree: Array.isArray(treeData.tree) ? treeData.tree : [],
+          readme: decodedReadme,
+          issues: pureIssues,
+          pullRequests: Array.isArray(pullsData) ? pullsData : [],
+          languages: languagesData
+        }
+      });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
   // API: Get comprehensive Git status
   app.get("/api/git/status", async (req, res) => {
     try {

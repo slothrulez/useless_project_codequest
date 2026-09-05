@@ -11,6 +11,7 @@ interface GameCanvasProps {
   teleportTarget: Position | null;
   onClearTeleport: () => void;
   gitStatus: GitStatusMode;
+  playerName?: string;
   initialPosition?: Position;
   onMovementChange?: (isMoving: boolean, activeKeys: { up: boolean; down: boolean; left: boolean; right: boolean }) => void;
   onPlayerPositionChange?: (pos: Position, dir: Direction) => void;
@@ -84,6 +85,7 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
   teleportTarget,
   onClearTeleport,
   gitStatus,
+  playerName,
   initialPosition,
   onMovementChange,
   onPlayerPositionChange,
@@ -856,17 +858,16 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
             loc.height + 8
           );
 
-          // Interaction radius zone indicator (80px)
-          ctx.strokeStyle = 'rgba(77, 208, 225, 0.7)';
-          ctx.lineWidth = 1.5;
-          ctx.setLineDash([4, 4]);
-          ctx.shadowBlur = 0;
-          ctx.beginPath();
-          ctx.arc(loc.x, loc.y, 80, 0, Math.PI * 2);
-          ctx.stroke();
-
           // Floating prompt: "Press E to talk"
-          const badgeY = loc.y - loc.height / 2 - 18 + Math.sin(timestamp / 180) * 3;
+          let badgeX = loc.x;
+          let badgeY = loc.y - loc.height / 2 - 18 + Math.sin(timestamp / 180) * 3;
+
+          // For the Elder, move prompt to the right side near the Elder to avoid overlapping top code banner
+          if (loc.id === 'elder') {
+            badgeX = loc.x + loc.width / 2 + 50;
+            badgeY = loc.y - 10 + Math.sin(timestamp / 180) * 3;
+          }
+
           ctx.fillStyle = 'rgba(26, 26, 26, 0.95)';
           ctx.strokeStyle = '#4dd0e1';
           ctx.lineWidth = 1.5;
@@ -878,13 +879,13 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
           const boxW = textWidth + 18;
           const boxH = 22;
 
-          ctx.fillRect(loc.x - boxW / 2, badgeY - boxH / 2, boxW, boxH);
-          ctx.strokeRect(loc.x - boxW / 2, badgeY - boxH / 2, boxW, boxH);
+          ctx.fillRect(badgeX - boxW / 2, badgeY - boxH / 2, boxW, boxH);
+          ctx.strokeRect(badgeX - boxW / 2, badgeY - boxH / 2, boxW, boxH);
 
           ctx.fillStyle = '#ffffff';
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
-          ctx.fillText(promptText, loc.x, badgeY);
+          ctx.fillText(promptText, badgeX, badgeY);
 
           ctx.restore();
         }
@@ -895,13 +896,6 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
       ctx.save();
       const csX = 480;
       const csY = 690;
-      // Runic circular base on ground
-      ctx.strokeStyle = 'rgba(16, 185, 129, 0.4)';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.arc(csX, csY + 8, 22, 0, Math.PI * 2);
-      ctx.stroke();
-
       // Stone block base
       ctx.fillStyle = '#292524';
       ctx.fillRect(csX - 16, csY, 32, 14);
@@ -1145,7 +1139,7 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
           directionRef.current,
           isMovingRef.current,
           frameIndexRef.current,
-          42,
+          48,
           timestamp,
           tiltAngleRef.current,
           verticalBob,
@@ -1174,14 +1168,17 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
 
       // H. DRAW PLAYER NAME TAG OVER CHARACTER
       ctx.save();
-      const tagY = playerRef.current.y - 50 - verticalBob;
-      ctx.font = '8px "Press Start 2P", monospace';
+      const tagY = playerRef.current.y - 52 - verticalBob;
+      ctx.font = '7px "Press Start 2P", monospace';
       ctx.textAlign = 'center';
-      ctx.fillStyle = 'rgba(12, 10, 9, 0.75)';
-      const name = 'GORILLAZ';
-      const nw = ctx.measureText(name).width + 8;
-      ctx.fillRect(playerRef.current.x - nw / 2, tagY - 6, nw, 12);
-      ctx.fillStyle = '#ffffff';
+      ctx.fillStyle = 'rgba(28, 25, 23, 0.85)';
+      ctx.strokeStyle = 'rgba(180, 83, 9, 0.8)';
+      ctx.lineWidth = 1;
+      const name = (playerName || 'HERO').toUpperCase();
+      const nw = ctx.measureText(name).width + 10;
+      ctx.fillRect(playerRef.current.x - nw / 2, tagY - 7, nw, 14);
+      ctx.strokeRect(playerRef.current.x - nw / 2, tagY - 7, nw, 14);
+      ctx.fillStyle = '#fef3c7';
       ctx.fillText(name, playerRef.current.x, tagY + 3);
       ctx.restore();
 
@@ -1231,15 +1228,6 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
             ctx.fillStyle = '#22c55e';
             ctx.fillRect(fgScreenX + 1 * fg.scale, fgScreenY, 1.5 * fg.scale, 4 * fg.scale);
             ctx.fillRect(fgScreenX + 5 * fg.scale, fgScreenY - 2 * fg.scale, 1.5 * fg.scale, 5 * fg.scale);
-          } else if (fg.type === 'leaves') {
-            ctx.fillStyle = 'rgba(21, 128, 61, 0.85)';
-            ctx.beginPath();
-            ctx.arc(fgScreenX, fgScreenY, 35 * fg.scale, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = 'rgba(34, 197, 94, 0.7)';
-            ctx.beginPath();
-            ctx.arc(fgScreenX + 8, fgScreenY - 6, 20 * fg.scale, 0, Math.PI * 2);
-            ctx.fill();
           }
         }
       });
