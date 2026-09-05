@@ -140,7 +140,7 @@ more elder interactions
 package.json tavern
 
 <img width="1399" height="679" alt="Image" src="https://github.com/user-attachments/assets/ffa58a0d-e0ce-4aa9-a2ff-87b4744c55ac" />
-dsds
+merge conflict boss
 
 <img width="1404" height="679" alt="Image" src="https://github.com/user-attachments/assets/d6aa9a1b-a824-4cec-a00c-fe2ffd1db79f" />
 fsdsds
