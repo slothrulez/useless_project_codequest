@@ -121,14 +121,29 @@ npm run vscode:prepublish
 ---
 
 # Screenshots (Add at least 3)
-![<img width="1920" height="853" alt="Image" src="https://github.com/user-attachments/assets/148dd4f1-3cb0-4fc1-8bd7-62c0527a5640" />](Add screenshot 1 here with proper name)
+<img width="1920" height="836" alt="Image" src="https://github.com/user-attachments/assets/d3437294-dffa-430b-8304-df8bfe755e89" />
+landing page
+
+<img width="1399" height="679" alt="Image" src="https://github.com/user-attachments/assets/a224f441-ebc6-40db-b5a3-8a7f4e70d1d6" />
 *Add caption explaining what this shows*
 
-![Screenshot2](Add screenshot 2 here with proper name)
+<img width="1402" height="679" alt="Image" src="https://github.com/user-attachments/assets/758c743b-0d3e-4222-9374-33b5bb30ddb8" />
 *Add caption explaining what this shows*
 
-![Screenshot3](Add screenshot 3 here with proper name)
-*Add caption explaining what this shows*
+<img width="1395" height="679" alt="Image" src="https://github.com/user-attachments/assets/003d2ba3-6a2d-46cc-b28c-1b832e83a4ba" />
+dsd
+
+<img width="1401" height="679" alt="Image" src="https://github.com/user-attachments/assets/80f50755-bfed-4e70-9314-412f61acf369" />
+fsfs
+
+<img width="1396" height="678" alt="Image" src="https://github.com/user-attachments/assets/ba08f300-7810-4e59-ba0d-d6849fa8ddaa" />
+dsdsd
+
+<img width="1399" height="679" alt="Image" src="https://github.com/user-attachments/assets/ffa58a0d-e0ce-4aa9-a2ff-87b4744c55ac" />
+dsds
+
+<img width="1404" height="679" alt="Image" src="https://github.com/user-attachments/assets/d6aa9a1b-a824-4cec-a00c-fe2ffd1db79f" />
+fsdsds
 
 # Diagrams
 ```
