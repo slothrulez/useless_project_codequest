@@ -137,7 +137,7 @@ more elder interactions
 .gitignore fortress
 
 <img width="1396" height="678" alt="Image" src="https://github.com/user-attachments/assets/ba08f300-7810-4e59-ba0d-d6849fa8ddaa" />
-dsdsd
+package.json tavern
 
 <img width="1399" height="679" alt="Image" src="https://github.com/user-attachments/assets/ffa58a0d-e0ce-4aa9-a2ff-87b4744c55ac" />
 dsds
