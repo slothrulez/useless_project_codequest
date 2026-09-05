@@ -2,24 +2,24 @@
 
 
 
-# [Project Name] 🎯
+# CodeQuest - Your Code. Your World 🎯
 
 
 ## Basic Details
-### Team Name: [Name]
+### Team Name: Team CodeQuest
 
 
 ### Team Members
-- Team Lead: [Name] - [College]
+- Team Lead: Anirudh K - Toc H Institute of Science and Technology
 
 ### Project Description
 CodeQuest is a 2D retro pixel-art RPG that turns mastering Git & GitHub into an immersive, interactive quest. Instead of reading traditional command-line documentation, you explore a fantasy realm where everyday Git operations—staging, committing, branching, stashing, and resolving merge conflicts—are represented as physical world locations and NPC interactions.
 
 ### The Problem (that doesn't exist)
-[What ridiculous problem are you solving?]
+We have spent decades turning software development into increasingly efficient workflows. Open a terminal. Run a command. Commit your changes. Create a branch. Push. Merge. Repeat. Efficient? Yes. Memorable? Not exactly. A Git repository can contain the history of an entire project — abandoned ideas, evolving code, branching timelines, unfinished quests, and conflicts born from developers walking different paths — yet all of that is represented through text, hashes, folders, and commands. There is an entire world hidden inside every repository, but we've been looking at it through a terminal window. So, naturally, we decided this was a serious problem that absolutely needed solving.
 
 ### The Solution (that nobody asked for)
-Git is too easy to ignore. You type `git push` and nothing feels like it matters—it's just text on a screen. No ceremony. No stakes. No drama. Meanwhile, what you're actually doing is saving your work permanently, sharing code with the world, potentially breaking production, and collaborating with others, but it feels like typing. So we asked an absurd question: What if Git operations felt like they mattered? What if pushing code required facing a wizard first? What if merge conflicts were actual boss fights? What if your repository was a world you could explore? CodeQuest is the answer to a question nobody asked. We're solving the ridiculous problem of developers being too productive with Git—instead of typing `git push origin main` in 5 seconds, you now have to walk to the Git Shrine, get permission from a wizard, and solve merge conflicts as literal boss fights. Is there a real problem? No. But there is an opportunity: What if the most important tool in development was also the most fun? This project exists to prove that unnecessary things can be beautiful, that over-engineering something ridiculous can result in something genuinely cool, and that Git—which is actually a dramatic narrative of your project's evolution—deserves to feel that way.
+CODEQUEST turns your GitHub repository into a mystical, playable realm where your codebase becomes the world itself. You don't simply open a repository — you enter it. Your project unfolds into a pixel-art kingdom where ancient commits become fragments of history, folders become unexplored regions, files become inhabitants, branches become divergent paths, issues become quests, and merge conflicts become monsters standing between you and progression. An Elder guides you through the state of your realm, the Commit Forge lets you forge your changes into history, the Git Shrine governs your branches and stash, and when two paths collide, you don't just see conflict markers — you face the consequences as a boss battle. Every realm is generated from the actual repository, meaning every developer gets a world shaped by their own code. We took the most mundane parts of Git, wrapped them in fantasy, adventure, progression, lore, quests, and unnecessarily dramatic pixel-art — because apparently your repository was always an RPG. It just needed a hero.
 
 ## Technical Details
 
@@ -121,7 +121,7 @@ npm run vscode:prepublish
 ---
 
 # Screenshots (Add at least 3)
-![Screenshot1](Add screenshot 1 here with proper name)
+![<img width="1920" height="853" alt="Image" src="https://github.com/user-attachments/assets/148dd4f1-3cb0-4fc1-8bd7-62c0527a5640" />](Add screenshot 1 here with proper name)
 *Add caption explaining what this shows*
 
 ![Screenshot2](Add screenshot 2 here with proper name)
