@@ -134,7 +134,7 @@ elder interactions
 more elder interactions
 
 <img width="1395" height="679" alt="Image" src="https://github.com/user-attachments/assets/003d2ba3-6a2d-46cc-b28c-1b832e83a4ba" />
-fsfs
+.gitignore fortress
 
 <img width="1396" height="678" alt="Image" src="https://github.com/user-attachments/assets/ba08f300-7810-4e59-ba0d-d6849fa8ddaa" />
 dsdsd
