@@ -130,10 +130,10 @@ game page
 <img width="1402" height="679" alt="Image" src="https://github.com/user-attachments/assets/758c743b-0d3e-4222-9374-33b5bb30ddb8" />
 elder interactions
 
-<img width="1395" height="679" alt="Image" src="https://github.com/user-attachments/assets/003d2ba3-6a2d-46cc-b28c-1b832e83a4ba" />
-dsd
-
 <img width="1401" height="679" alt="Image" src="https://github.com/user-attachments/assets/80f50755-bfed-4e70-9314-412f61acf369" />
+more elder interactions
+
+<img width="1395" height="679" alt="Image" src="https://github.com/user-attachments/assets/003d2ba3-6a2d-46cc-b28c-1b832e83a4ba" />
 fsfs
 
 <img width="1396" height="678" alt="Image" src="https://github.com/user-attachments/assets/ba08f300-7810-4e59-ba0d-d6849fa8ddaa" />
