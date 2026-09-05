@@ -131,16 +131,57 @@ npm run vscode:prepublish
 *Add caption explaining what this shows*
 
 # Diagrams
-![Workflow](Add your workflow/architecture diagram here)
-*Add caption explaining your workflow*
+```
+                    ┌──────────────────────┐
+                    │      CODEQUEST       │
+                    │    React Frontend    │
+                    └──────────┬───────────┘
+                               │
+                    GitHub OAuth / API
+                               │
+                               ▼
+                    ┌──────────────────────┐
+                    │    Express Server    │
+                    │      Node.js         │
+                    └──────────┬───────────┘
+                               │
+              ┌────────────────┼────────────────┐
+              ▼                ▼                ▼
+       ┌─────────────┐  ┌─────────────┐  ┌──────────────┐
+       │ GitHub API  │  │ Local Git   │  │ Repository   │
+       │             │  │   Engine    │  │    Parser    │
+       └──────┬──────┘  └──────┬──────┘  └──────┬───────┘
+              │                │                │
+              └────────────────┼────────────────┘
+                               ▼
+                    ┌──────────────────────┐
+                    │   World Generator    │
+                    │                      │
+                    │ Repo → Game World   │
+                    └──────────┬───────────┘
+                               ▼
+                    ┌──────────────────────┐
+                    │   HTML5 Canvas Game  │
+                    │                      │
+                    │ Player / NPCs / Map  │
+                    │ Quests / Collisions  │
+                    └──────────┬───────────┘
+                               │
+                               ▼
+                    ┌──────────────────────┐
+                    │    Git Actions       │
+                    │                      │
+                    │ Commit / Branch      │
+                    │ Stash / Sync / Merge │
+                    └──────────────────────┘
+```
+                    
+CODEQUEST Architecture
 
 ### Project Demo
 # Video
-[Add your demo video link here]
-*Explain what the video demonstrates*
-
-## Team Contributions
-- [Name 1]: [Specific contributions]
+[![Watch the CodeQuest Demo](https://youtube.com)](https://youtu.be/bV-efmlelcM)
+walkthrough
 
 ---
 Made with ❤️ at TinkerHub Useless Projects 
