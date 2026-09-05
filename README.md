@@ -125,10 +125,10 @@ npm run vscode:prepublish
 landing page
 
 <img width="1399" height="679" alt="Image" src="https://github.com/user-attachments/assets/a224f441-ebc6-40db-b5a3-8a7f4e70d1d6" />
-*Add caption explaining what this shows*
+game page 
 
 <img width="1402" height="679" alt="Image" src="https://github.com/user-attachments/assets/758c743b-0d3e-4222-9374-33b5bb30ddb8" />
-*Add caption explaining what this shows*
+elder interactions
 
 <img width="1395" height="679" alt="Image" src="https://github.com/user-attachments/assets/003d2ba3-6a2d-46cc-b28c-1b832e83a4ba" />
 dsd
