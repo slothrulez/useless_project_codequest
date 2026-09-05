@@ -1,0 +1,6 @@
+{
+  "name": "CodeQuest",
+  "description": "A retro pixel-art RPG developer game that gamifies Git learning through interactive exploration, quests, and commits.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
